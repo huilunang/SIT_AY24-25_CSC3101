@@ -65,7 +65,7 @@ class SignInPage extends StatelessWidget {
               SizedBox(
                   width: double.infinity,
                   child: CustomAuthButton(
-                      buttonText: 'login', onPressed: handleSignIn)),
+                      buttonText: 'Login', onPressed: handleSignIn)),
               const SizedBox(height: 24),
               Align(
                 alignment: Alignment.centerLeft, // Align text to the left
