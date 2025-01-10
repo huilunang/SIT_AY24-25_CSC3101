@@ -1,0 +1,55 @@
+import 'dart:convert';
+
+import 'package:bloobin_app/features/auth/helper/auth_helper.dart';
+import 'package:bloobin_app/features/home/domain/chart_data.dart';
+import 'package:bloobin_app/features/home/domain/home.dart';
+
+class HomeRepository {
+  late String _userId;
+
+  HomeRepository() {
+    initialize();
+  }
+
+  Future<void> initialize() async {
+    _userId = await AuthHelper.getUserIdFromLocalStorage() ?? '';
+  }
+
+  Future<Home> fetchHomeDetails({String frequency = 'Daily'}) async {
+    try {
+      const mockResponse = '''
+      {
+        "point": "105",
+        "reward": "20",
+        "chartData": [
+          { "date": "2024-11-11T00:00:00Z", "type": "Plastic", "count": 12 },
+          { "date": "2024-12-11T00:00:00Z", "type": "Cardboard", "count": 8 },
+          { "date": "2024-12-31T00:00:00Z", "type": "Metal", "count": 5 },
+          { "date": "2025-01-02T00:00:00Z", "type": "Plastic", "count": 10 },
+          { "date": "2025-01-02T00:00:00Z", "type": "Cardboard", "count": 6 },
+          { "date": "2025-01-02T00:00:00Z", "type": "Metal", "count": 3 },
+          { "date": "2025-01-03T00:00:00Z", "type": "Plastic", "count": 6 }
+        ]
+      }
+      ''';
+
+      final Map<String, dynamic> jsonData = jsonDecode(mockResponse);
+
+      final List<ChartData> chartData = (jsonData['chartData'] as List<dynamic>)
+          .map((item) => ChartData(
+                item['date'],
+                item['type'],
+                item['count'],
+              ))
+          .toList();
+
+      return Home(
+        jsonData['point'],
+        jsonData['reward'],
+        chartData,
+      );
+    } catch (e) {
+      throw Exception("Error fetching home details: $e");
+    }
+  }
+}

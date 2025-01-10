@@ -3,10 +3,10 @@ import 'package:bloobin_app/navigation/blocs/navigation_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
-  NavigationBloc() : super(NavigationLoaded(0)) {
+  NavigationBloc() : super(NavigationLoadInProgress(0)) {
     on<Navigated>((event, emit) {
       try {
-        emit(NavigationLoaded(event.index));
+        emit(NavigationLoadInProgress(event.index));
       } catch (e) {
         emit(NavigationError('Failed to navigate: $e'));
       }

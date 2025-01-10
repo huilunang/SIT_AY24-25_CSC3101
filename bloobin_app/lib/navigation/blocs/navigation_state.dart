@@ -1,9 +1,9 @@
 sealed class NavigationState {}
 
-final class NavigationLoaded extends NavigationState {
+final class NavigationLoadInProgress extends NavigationState {
   final int selectedIndex;
 
-  NavigationLoaded(this.selectedIndex);
+  NavigationLoadInProgress(this.selectedIndex);
 }
 
 final class NavigationError extends NavigationState {
