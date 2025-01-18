@@ -1,8 +1,8 @@
 import 'package:bloobin_app/features/auth/helper/auth_helper.dart';
 import 'package:bloobin_app/features/auth/presentation/pages/signin_page.dart';
-import 'package:bloobin_app/features/home/presentation/components/analytics_widget.dart';
-import 'package:bloobin_app/features/home/presentation/components/header_widget.dart';
-import 'package:bloobin_app/features/home/presentation/components/reward_widget.dart';
+import 'package:bloobin_app/features/home/presentation/components/home/analytics_widget.dart';
+import 'package:bloobin_app/features/home/presentation/components/home/header_widget.dart';
+import 'package:bloobin_app/features/home/presentation/components/home/reward_widget.dart';
 import 'package:bloobin_app/navigation/blocs/navigation_event.dart';
 import 'package:bloobin_app/utils/bloc_access_extension.dart';
 import 'package:flutter/material.dart';

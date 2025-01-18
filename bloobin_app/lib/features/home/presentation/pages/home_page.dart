@@ -1,5 +1,5 @@
-import 'package:bloobin_app/features/home/presentation/blocs/home_event.dart';
-import 'package:bloobin_app/features/home/presentation/components/home_content.dart';
+import 'package:bloobin_app/features/home/presentation/blocs/home/home_event.dart';
+import 'package:bloobin_app/features/home/presentation/components/home/home_content.dart';
 import 'package:bloobin_app/features/home/presentation/pages/points_page.dart';
 import 'package:bloobin_app/features/home/presentation/pages/rewards_page.dart';
 import 'package:bloobin_app/utils/bloc_access_extension.dart';
@@ -35,7 +35,10 @@ class _HomePageState extends State<HomePage> {
           case '/reward':
             return MaterialPageRoute(builder: (_) => const RewardsPage());
           case '/points':
-            return MaterialPageRoute(builder: (_) => const PointsPage());
+            final points = settings.arguments as String? ?? '0';
+
+            return MaterialPageRoute(
+                builder: (_) => PointsPage(points: points));
           default:
             return MaterialPageRoute(builder: (_) => const HomeContent());
         }

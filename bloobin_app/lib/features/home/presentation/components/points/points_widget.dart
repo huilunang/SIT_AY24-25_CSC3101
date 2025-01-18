@@ -1,0 +1,108 @@
+import 'package:bloobin_app/features/home/presentation/blocs/points/points_bloc.dart';
+import 'package:bloobin_app/features/home/presentation/blocs/points/points_state.dart';
+import 'package:bloobin_app/features/home/presentation/components/section_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+
+class PointsWidget extends StatelessWidget {
+  final String points;
+
+  const PointsWidget({super.key, required this.points});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Expanded(
+      child: Column(
+        children: [
+          Material(
+            elevation: 2.0,
+            borderRadius: BorderRadius.circular(16.0),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    "$points pts",
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => {},
+                    child: const Text('Redeem Points'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: SectionWidget(
+              sectionTitle: 'Transactions',
+              sectionChild: BlocBuilder<PointsBloc, PointsState>(
+                builder: (context, state) {
+                  if (state is PointsLoadSuccess) {
+                    final transactionData = state.points.transactionData;
+                    final dateFormatter = DateFormat('yyyy-MM-dd');
+
+                    return ListView.separated(
+                      itemCount: transactionData.keys.length,
+                      separatorBuilder: (context, index) => const Divider(),
+                      itemBuilder: (context, index) {
+                        final rawDate = transactionData.keys.elementAt(index);
+                        final formattedDate =
+                            dateFormatter.format(DateTime.parse(rawDate));
+                        final transactions = transactionData[rawDate]!;
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 8),
+                            Text(
+                              formattedDate,
+                              style: const TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            ...transactions.map(
+                              (item) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4.0),
+                                child: Text(item),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                        );
+                      },
+                    );
+                  } else if (state is PointsLoadInProgress) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is PointsError) {
+                    return Center(child: Text(state.errorMessage));
+                  } else {
+                    return const Center(
+                        child: Text('No transactions available.'));
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

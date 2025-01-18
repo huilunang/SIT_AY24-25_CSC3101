@@ -428,3 +428,18 @@ class ColorFamily {
   final Color colorContainer;
   final Color onColorContainer;
 }
+
+extension CustomColorScheme on ColorScheme {
+  Color get sectionContainerLightScheme => const Color(0xffe3f2fd);
+  Color get onSectionContainerLightScheme => const Color(0xff0d47a1);
+  Color get sectionContainerLightMCScheme => const Color(0xffc8e6ff);
+  Color get onSectionContainerLightMCScheme => const Color(0xff073b7c);
+  Color get sectionContainerLightHCScheme => const Color(0xffa3d1ff);
+  Color get onSectionContainerLightHCScheme => const Color(0xff042c5b);
+  Color get sectionContainerDarkScheme => const Color(0xff0a1f30);
+  Color get onSectionContainerDarkScheme => const Color(0xffe3f2fd);
+  Color get sectionContainerDarkMCScheme => const Color(0xff082432);
+  Color get onSectionContainerDarkMCScheme => const Color(0xffbce8ff);
+  Color get sectionContainerDarkHCScheme => const Color(0xff041922);
+  Color get onSectionContainerDarkHCScheme => const Color(0xffffffff);
+}

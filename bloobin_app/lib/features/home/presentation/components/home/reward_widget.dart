@@ -1,5 +1,7 @@
-import 'package:bloobin_app/features/home/presentation/blocs/home_bloc.dart';
-import 'package:bloobin_app/features/home/presentation/blocs/home_state.dart';
+import 'package:bloobin_app/features/home/presentation/blocs/home/home_bloc.dart';
+import 'package:bloobin_app/features/home/presentation/blocs/home/home_state.dart';
+import 'package:bloobin_app/features/home/presentation/blocs/points/points_event.dart';
+import 'package:bloobin_app/utils/bloc_access_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -40,7 +42,12 @@ class RewardsWidget extends StatelessWidget {
                         value: state.home.point,
                         label: 'Points',
                         onTap: () {
-                          Navigator.of(context).pushNamed('/points');
+                          Navigator.of(context).pushNamed(
+                            '/points',
+                            arguments: state.home.point,
+                          );
+
+                          context.pointsBloc.add(PointsLoaded());
                         },
                       ),
                       Container(
@@ -79,7 +86,9 @@ class RewardsWidget extends StatelessWidget {
   }) {
     return Expanded(
       child: GestureDetector(
-        onTap: () {onTap();},
+        onTap: () {
+          onTap();
+        },
         child: Container(
           padding: const EdgeInsets.all(16.0),
           child: Column(

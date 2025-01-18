@@ -1,7 +1,8 @@
 import 'package:bloobin_app/features/auth/data/auth_repository.dart';
 import 'package:bloobin_app/features/auth/presentation/pages/signin_page.dart';
 import 'package:bloobin_app/features/home/data/home_repository.dart';
-import 'package:bloobin_app/features/home/presentation/blocs/home_bloc.dart';
+import 'package:bloobin_app/features/home/presentation/blocs/home/home_bloc.dart';
+import 'package:bloobin_app/features/home/presentation/blocs/points/points_bloc.dart';
 import 'package:bloobin_app/navigation/blocs/navigation_bloc.dart';
 import 'package:bloobin_app/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,10 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => NavigationBloc()),
           BlocProvider(
               create: (context) => HomeBloc(
+                    RepositoryProvider.of<HomeRepository>(context),
+                  )),
+          BlocProvider(
+              create: (context) => PointsBloc(
                     RepositoryProvider.of<HomeRepository>(context),
                   )),
         ],

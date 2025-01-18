@@ -1,6 +1,6 @@
 import 'package:bloobin_app/features/home/data/home_repository.dart';
-import 'package:bloobin_app/features/home/presentation/blocs/home_event.dart';
-import 'package:bloobin_app/features/home/presentation/blocs/home_state.dart';
+import 'package:bloobin_app/features/home/presentation/blocs/home/home_event.dart';
+import 'package:bloobin_app/features/home/presentation/blocs/home/home_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {

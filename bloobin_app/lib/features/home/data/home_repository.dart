@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bloobin_app/features/auth/helper/auth_helper.dart';
 import 'package:bloobin_app/features/home/domain/chart_data.dart';
 import 'package:bloobin_app/features/home/domain/home.dart';
+import 'package:bloobin_app/features/home/domain/points.dart';
 
 class HomeRepository {
   late String _userId;
@@ -50,6 +51,41 @@ class HomeRepository {
       );
     } catch (e) {
       throw Exception("Error fetching home details: $e");
+    }
+  }
+
+  Future<Points> fetchPointDetails() async {
+    try {
+      const mockResponse = '''
+      {
+        "2024-11-11T00:00:00Z": [
+          "+ 3 pts from recycling",
+          "- 100 pts to redeem voucher",
+          "+ 3 pts from recycling"
+        ],
+        "2024-12-11T00:00:00Z": [
+          "+ 2 pts from recycling",
+          "- 50 pts to redeem voucher",
+          "- 100 pts to redeem voucher",
+          "+ 3 pts from recycling"
+        ],
+        "2024-01-11T00:00:00Z": [
+          "+ 2 pts from recycling",
+          "- 50 pts to redeem voucher",
+          "- 100 pts to redeem voucher",
+          "+ 3 pts from recycling"
+        ]
+      }
+      ''';
+
+      final Map<String, dynamic> jsonData = jsonDecode(mockResponse);
+      final transactionData = jsonData.map(
+        (key, value) => MapEntry(key, List<String>.from(value)),
+      );
+
+      return Points(transactionData: transactionData);
+    } catch (e) {
+      throw Exception("Error fetching transactions: $e");
     }
   }
 }

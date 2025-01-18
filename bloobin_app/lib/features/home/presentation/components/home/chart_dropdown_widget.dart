@@ -1,6 +1,7 @@
 import 'dart:collection';
 
-import 'package:bloobin_app/features/home/presentation/blocs/home_event.dart';
+import 'package:bloobin_app/features/home/presentation/blocs/home/home_event.dart';
+import 'package:bloobin_app/theme/theme.dart';
 import 'package:bloobin_app/utils/bloc_access_extension.dart';
 import 'package:flutter/material.dart';
 
@@ -17,13 +18,15 @@ class ChartDropdownWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Material(
       elevation: 1.0,
-      color: Colors.blue[50],
+      color: colorScheme.sectionContainerLightScheme,
       borderRadius: BorderRadius.circular(8.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.blue[50],
+          color: colorScheme.sectionContainerLightScheme,
           borderRadius: BorderRadius.circular(16.0),
         ),
         child: DropdownMenu<String>(
