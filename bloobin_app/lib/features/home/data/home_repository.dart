@@ -4,6 +4,7 @@ import 'package:bloobin_app/features/auth/helper/auth_helper.dart';
 import 'package:bloobin_app/features/home/domain/chart_data.dart';
 import 'package:bloobin_app/features/home/domain/home.dart';
 import 'package:bloobin_app/features/home/domain/points.dart';
+import 'package:bloobin_app/features/home/domain/rewards.dart';
 
 class HomeRepository {
   late String _userId;
@@ -86,6 +87,33 @@ class HomeRepository {
       return Points(transactionData: transactionData);
     } catch (e) {
       throw Exception("Error fetching transactions: $e");
+    }
+  }
+
+  Future<List<Rewards>> fetchRewardDetails() async {
+    try {
+      const mockResponse = '''
+      [
+        { "id": "1", "name": "\$5 HPB Voucher", "validDate": "2024-03-00T00:00:00Z" },
+        { "id": "2", "name": "\$10 Fairprice Voucher", "validDate": "2024-04-00T00:00:00Z" },
+        { "id": "3", "name": "\$10 HPB Voucher", "validDate": "2024-04-00T00:00:00Z" },
+        { "id": "2", "name": "\$10 Fairprice Voucher", "validDate": "2024-04-00T00:00:00Z" },
+        { "id": "3", "name": "\$10 HPB Voucher", "validDate": "2024-04-00T00:00:00Z" },
+        { "id": "2", "name": "\$10 Fairprice Voucher", "validDate": "2024-04-00T00:00:00Z" }
+      ]
+      ''';
+
+      final List<dynamic> jsonData = jsonDecode(mockResponse);
+
+      return jsonData
+          .map((item) => Rewards(
+                item['id'],
+                item['name'],
+                item['validDate'],
+              ))
+          .toList();
+    } catch (e) {
+      throw Exception("Error fetching rewards: $e");
     }
   }
 }

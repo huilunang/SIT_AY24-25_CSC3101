@@ -49,7 +49,16 @@ class PointsWidget extends StatelessWidget {
           const SizedBox(height: 16),
           Expanded(
             child: SectionWidget(
-              sectionTitle: 'Transactions',
+              sectionHeader: const Padding(
+                padding: EdgeInsets.only(top: 12.0),
+                child: Text(
+                  'History',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
               sectionChild: BlocBuilder<PointsBloc, PointsState>(
                 builder: (context, state) {
                   if (state is PointsLoadSuccess) {
