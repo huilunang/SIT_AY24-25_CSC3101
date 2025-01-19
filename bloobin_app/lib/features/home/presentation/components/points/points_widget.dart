@@ -1,6 +1,9 @@
+import 'package:bloobin_app/features/home/presentation/blocs/catalogue/catalogue_event.dart';
 import 'package:bloobin_app/features/home/presentation/blocs/points/points_bloc.dart';
 import 'package:bloobin_app/features/home/presentation/blocs/points/points_state.dart';
 import 'package:bloobin_app/features/home/presentation/components/section_widget.dart';
+import 'package:bloobin_app/features/home/presentation/pages/catalogue_page.dart';
+import 'package:bloobin_app/utils/bloc_access_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -39,7 +42,15 @@ class PointsWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => {},
+                    onPressed: () {
+                      context.catalogueBloc.add(CatalogueLoaded());
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CataloguePage()),
+                      );
+                    },
                     child: const Text('Redeem Points'),
                   ),
                 ],

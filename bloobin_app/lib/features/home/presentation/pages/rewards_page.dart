@@ -55,7 +55,7 @@ class RewardsPage extends StatelessWidget {
                             ),
                             color: index.isEven
                                 ? colorScheme.sectionContainerLightScheme
-                                : colorScheme.surface, // Alternate colors
+                                : colorScheme.surface,
                             child: Padding(
                               padding: const EdgeInsets.all(24.0),
                               child: Column(

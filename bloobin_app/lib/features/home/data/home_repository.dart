@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bloobin_app/features/auth/helper/auth_helper.dart';
+import 'package:bloobin_app/features/home/domain/catalogue.dart';
 import 'package:bloobin_app/features/home/domain/chart_data.dart';
 import 'package:bloobin_app/features/home/domain/home.dart';
 import 'package:bloobin_app/features/home/domain/points.dart';
@@ -110,6 +111,33 @@ class HomeRepository {
                 item['id'],
                 item['name'],
                 item['validDate'],
+              ))
+          .toList();
+    } catch (e) {
+      throw Exception("Error fetching rewards: $e");
+    }
+  }
+
+  Future<List<Catalogue>> fetchCatalogueDetails() async {
+    try {
+      const mockResponse = '''
+      [
+        { "id": "1", "name": "\$5 HPB Voucher", "cost": 100 },
+        { "id": "2", "name": "\$10 Fairprice Voucher", "cost": 200 },
+        { "id": "3", "name": "\$10 HPB Voucher", "cost": 200 },
+        { "id": "2", "name": "\$10 Fairprice Voucher", "cost": 200 },
+        { "id": "3", "name": "\$10 HPB Voucher", "cost": 200 },
+        { "id": "2", "name": "\$10 Fairprice Voucher", "cost": 200 }
+      ]
+      ''';
+
+      final List<dynamic> jsonData = jsonDecode(mockResponse);
+
+      return jsonData
+          .map((item) => Catalogue(
+                item['id'],
+                item['name'],
+                item['cost'],
               ))
           .toList();
     } catch (e) {
