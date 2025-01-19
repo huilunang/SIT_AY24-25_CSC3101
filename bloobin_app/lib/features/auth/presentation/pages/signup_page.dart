@@ -30,41 +30,43 @@ class SignUpPage extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/images/bloobin_signup.png',
-                height: 260,
-                fit: BoxFit.contain,
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Create account',
-                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 40),
-              CustomTextField(
-                controller: emailController,
-                labelText: 'Email',
-              ),
-              const SizedBox(height: 14),
-              CustomTextField(
-                controller: passwordController,
-                labelText: 'Password',
-              ),
-              const SizedBox(height: 14),
-              CustomTextField(
-                controller: confirmPasswordController,
-                labelText: 'Re-enter password',
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                  width: double.infinity,
-                  child: CustomAuthButton(
-                      buttonText: 'Create', onPressed: handleSignUp)),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/bloobin_signup.png',
+                  height: 260,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Create account',
+                  style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 40),
+                CustomTextField(
+                  controller: emailController,
+                  labelText: 'Email',
+                ),
+                const SizedBox(height: 14),
+                CustomTextField(
+                  controller: passwordController,
+                  labelText: 'Password',
+                ),
+                const SizedBox(height: 14),
+                CustomTextField(
+                  controller: confirmPasswordController,
+                  labelText: 'Re-enter password',
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                    width: double.infinity,
+                    child: CustomAuthButton(
+                        buttonText: 'Create', onPressed: handleSignUp)),
+              ],
+            ),
           ),
         ),
       ),

@@ -32,69 +32,71 @@ class SignInPage extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/images/bloobin_signin.png',
-                height: 260,
-                fit: BoxFit.contain,
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Sign in to your account',
-                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Welcome back! Please enter your details.',
-                style: TextStyle(color: colorScheme.outline),
-              ),
-              const SizedBox(height: 40),
-              CustomTextField(
-                controller: emailController,
-                labelText: 'Email',
-              ),
-              const SizedBox(height: 14),
-              CustomTextField(
-                controller: passwordController,
-                labelText: 'Password',
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                  width: double.infinity,
-                  child: CustomAuthButton(
-                      buttonText: 'Login', onPressed: handleSignIn)),
-              const SizedBox(height: 24),
-              Align(
-                alignment: Alignment.centerLeft, // Align text to the left
-                child: RichText(
-                  text: TextSpan(
-                    text: 'Don’t have an account? ',
-                    style: TextStyle(color: colorScheme.outline),
-                    children: [
-                      TextSpan(
-                        text: 'Create account →',
-                        style: TextStyle(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SignUpPage(),
-                              ),
-                            );
-                          },
-                      ),
-                    ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/bloobin_signin.png',
+                  height: 260,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Sign in to your account',
+                  style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Welcome back! Please enter your details.',
+                  style: TextStyle(color: colorScheme.outline),
+                ),
+                const SizedBox(height: 35),
+                CustomTextField(
+                  controller: emailController,
+                  labelText: 'Email',
+                ),
+                const SizedBox(height: 14),
+                CustomTextField(
+                  controller: passwordController,
+                  labelText: 'Password',
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                    width: double.infinity,
+                    child: CustomAuthButton(
+                        buttonText: 'Login', onPressed: handleSignIn)),
+                const SizedBox(height: 24),
+                Align(
+                  alignment: Alignment.centerLeft, // Align text to the left
+                  child: RichText(
+                    text: TextSpan(
+                      text: 'Don’t have an account? ',
+                      style: TextStyle(color: colorScheme.outline),
+                      children: [
+                        TextSpan(
+                          text: 'Create account →',
+                          style: TextStyle(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SignUpPage(),
+                                ),
+                              );
+                            },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
