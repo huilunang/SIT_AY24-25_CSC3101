@@ -43,8 +43,48 @@ class CataloguePage extends StatelessWidget {
 
                       return GestureDetector(
                         onTap: () {
-                          print('Clicked on ${voucher.name}');
-                          // Add navigation or dialog here if needed
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Redeem Voucher'),
+                                  content: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        const TextSpan(
+                                            text:
+                                                'Are you sure you want to redeem '),
+                                        TextSpan(
+                                          text: voucher.name,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const TextSpan(text: ' using '),
+                                        TextSpan(
+                                          text: '${voucher.cost} points',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const TextSpan(text: '?'),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Redeem'),
+                                    ),
+                                  ],
+                                );
+                              });
                         },
                         child: Card(
                           elevation: 2,

@@ -45,8 +45,44 @@ class RewardsPage extends StatelessWidget {
 
                         return GestureDetector(
                           onTap: () {
-                            print('Clicked on ${voucher.name}');
-                            // Add navigation or dialog here if needed
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Claim Voucher'),
+                                  content: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        const TextSpan(
+                                            text:
+                                                'Are you sure you want to claim to use '),
+                                        TextSpan(
+                                          text: voucher.name,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const TextSpan(text: '?'),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        // Add logic to claim the voucher
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Claim'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           },
                           child: Card(
                             elevation: 2,
