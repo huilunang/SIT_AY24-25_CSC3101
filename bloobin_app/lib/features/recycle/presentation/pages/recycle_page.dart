@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloobin_app/features/recycle/data/recycle_repository.dart';
 import 'package:bloobin_app/features/recycle/presentation/pages/confirmation_page.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +14,12 @@ class RecyclePage extends StatefulWidget {
 }
 
 class _RecyclePageState extends State<RecyclePage> {
+  final RecycleRepository _recycleRepository = RecycleRepository();
   CameraController? _cameraController;
   Future<void>? _initializeControllerFuture;
   File? _imageFile;
   late CameraDescription _camera;
-  bool _isCapturing = false; // Prevents multiple captures at once
+  bool _isCapturing = false;
 
   @override
   void initState() {
@@ -77,14 +79,17 @@ class _RecyclePageState extends State<RecyclePage> {
 
     try {
       print("Uploading image: ${_imageFile!.path}");
-      await Future.delayed(const Duration(seconds: 2));
+      final result = await _recycleRepository.analyzeImage(_imageFile!);
 
       if (!mounted) return;
 
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ConfirmationPage(imageFile: _imageFile!),
+          builder: (context) => ConfirmationPage(
+            imageFile: _imageFile!,
+            recycleResult: result,
+          ),
         ),
       ).then((_) {
         setState(() {
