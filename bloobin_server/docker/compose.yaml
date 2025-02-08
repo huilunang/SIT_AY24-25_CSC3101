@@ -12,5 +12,23 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_PROD_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_PROD_DB}"]
+      interval: 5s
+      retries: 5
+    # volumes:
+    #   - ./sql:/docker-entrypoint-initdb.d
+  
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrate
+    container_name: migration_runner
+    depends_on:
+      db:
+        condition: service_healthy
+    working_dir: /app
     volumes:
-      - ./sql:/docker-entrypoint-initdb.d
+      - ../.:/app
+    env_file:
+      - ../.env
