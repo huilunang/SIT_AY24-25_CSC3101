@@ -1,3 +1,5 @@
+include .env
+
 # Docker Compose Configuration
 COMPOSE_FILE_ARG := -f docker/compose.yaml
 ENV_FILE_ARG := --env-file .env
@@ -17,7 +19,6 @@ build:
 
 run: db build
 	@echo "Running Bloobin Server..."
-	# @docker compose ${COMPOSE_FILE_ARG} ${ENV_FILE_ARG} up -d server
 	@./bin/bloobin_server
 
 clean:
@@ -32,17 +33,18 @@ test:
 migration: wait-db
 	@echo "Creating migration file..."
 	@docker compose ${COMPOSE_FILE_ARG} ${ENV_FILE_ARG} run --rm migrate \
-		migrate create -ext sql -dir ${MIGRATION_OUT_PATH_ARG} $(filter-out $@,$(MAKECMDGOALS))
+		migrate create -ext sql -dir ${MIGRATION_OUT_PATH} $(filter-out $@,$(MAKECMDGOALS))
 
 migrate-up: wait-db
 	@echo "Applying migrations (up)..."
+	@echo ${DB_CONN_STR}
 	@docker compose ${COMPOSE_FILE_ARG} ${ENV_FILE_ARG} run --rm migrate \
-		go run ${MIGRATION_EXE_PATH_ARG} up
+		migrate -path ${MIGRATION_OUT_PATH} -database ${DB_CONN_STR} up
 
 migrate-down: wait-db
 	@echo "Rolling back migrations (down)..."
 	@docker compose ${COMPOSE_FILE_ARG} ${ENV_FILE_ARG} run --rm migrate \
-		go run ${MIGRATION_EXE_PATH_ARG} down
+		migrate -path ${MIGRATION_OUT_PATH} -database ${DB_CONN_STR} down
 
 wait-db:
 	@echo "Waiting for DB to be ready..."

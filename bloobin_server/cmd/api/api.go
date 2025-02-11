@@ -22,10 +22,11 @@ func (s *APIServer) Run() error {
 	router := mux.NewRouter()
 	subRouter := router.PathPrefix("/api/v1").Subrouter()
 
-	userHandler := user.NewHandler()
+	userStore := user.NewStore(s.db.Db)
+	userHandler := user.NewHandler(userStore)
 	userHandler.RegisterRoutes(subRouter)
 
-	log.Println("Bloobin server running on port: ", s.listenAddr)
+	log.Println("Bloobin server running on port:", s.listenAddr)
 
 	return http.ListenAndServe(s.listenAddr, router)
 }
