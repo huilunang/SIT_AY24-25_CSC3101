@@ -7,11 +7,12 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/config"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/db"
 )
 
 func main() {
-	db, err := db.NewPostGreStore(os.Getenv("DB_CONN_STR"))
+	db, err := db.NewPostGreStore(config.Envs.DBConnStr)
 	if err != nil {
 		log.Fatal(err)
 	}
