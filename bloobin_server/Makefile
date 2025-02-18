@@ -37,7 +37,6 @@ migration: wait-db
 
 migrate-up: wait-db
 	@echo "Applying migrations (up)..."
-	@echo ${DB_CONN_STR}
 	@docker compose ${COMPOSE_FILE_ARG} ${ENV_FILE_ARG} run --rm migrate \
 		migrate -path ${MIGRATION_OUT_PATH} -database ${DB_CONN_STR} up
 

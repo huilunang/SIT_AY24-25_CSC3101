@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/config"
 	customErrors "github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/errors"
@@ -35,19 +34,23 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := utils.Validate.Struct(loginUserPayload); err != nil {
-		error := err.(validator.ValidationErrors)
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", error))
+		log.Printf("invalid payload: %s", utils.ExtractValidationErrors(err))
+		utils.WriteError(
+			w,
+			http.StatusBadRequest,
+			fmt.Errorf("%s", utils.ExtractValidationErrors(err)),
+		)
 		return
 	}
 
 	u, err := h.store.GetUserByEmail(loginUserPayload.Email)
 	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("user not found"))
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("user not found"))
 		return
 	}
 
 	if !auth.ComparePasswords(u.Password, []byte(loginUserPayload.Password)) {
-		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("invalid password"))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid password"))
 		return
 	}
 
@@ -58,13 +61,26 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteAPIJSON(w, http.StatusOK, map[string]string{"token": token})
+	utils.WriteAPIJSON(w, http.StatusOK, map[string]interface{}{
+		"user":  u,
+		"token": token,
+	})
 }
 
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	registerUserPayload := new(types.RegisterUserPayload)
 	if err := utils.DecodeAPIJSON(r, &registerUserPayload); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
+	}
+
+	if err := utils.Validate.Struct(registerUserPayload); err != nil {
+		log.Printf("invalid payload: %s", utils.ExtractValidationErrors(err))
+		utils.WriteError(
+			w,
+			http.StatusBadRequest,
+			fmt.Errorf("%s", utils.ExtractValidationErrors(err)),
+		)
+		return
 	}
 
 	user, err := h.store.GetUserByEmail(registerUserPayload.Email)
@@ -84,12 +100,6 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := utils.Validate.Struct(registerUserPayload); err != nil {
-		error := err.(validator.ValidationErrors)
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", error))
-		return
-	}
-
 	hashedPassword, err := auth.HashPassword(registerUserPayload.Password)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
@@ -101,6 +111,7 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		Password: hashedPassword,
 	})
 	if err != nil {
+		log.Printf("Error creating user %v", err)
 		utils.WriteError(w, http.StatusInternalServerError, err)
 	}
 
