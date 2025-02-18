@@ -1,4 +1,5 @@
 import 'package:bloobin_app/features/auth/data/auth_repository.dart';
+import 'package:bloobin_app/features/auth/presentation/blocs/auth_bloc.dart';
 import 'package:bloobin_app/features/auth/presentation/pages/signin_page.dart';
 import 'package:bloobin_app/features/home/data/home_repository.dart';
 import 'package:bloobin_app/features/home/presentation/blocs/catalogue/catalogue_bloc.dart';
@@ -9,8 +10,11 @@ import 'package:bloobin_app/navigation/blocs/navigation_bloc.dart';
 import 'package:bloobin_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
+  await dotenv.load();
+
   runApp(const MyApp());
 }
 
@@ -31,6 +35,10 @@ class MyApp extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => NavigationBloc()),
+          BlocProvider(
+              create: (context) => AuthBloc(
+                    RepositoryProvider.of<AuthRepository>(context),
+                  )),
           BlocProvider(
               create: (context) => HomeBloc(
                     RepositoryProvider.of<HomeRepository>(context),
