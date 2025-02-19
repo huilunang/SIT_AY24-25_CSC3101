@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/db"
+	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/home"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/user"
 )
 
@@ -25,6 +26,10 @@ func (s *APIServer) Run() error {
 	userStore := user.NewStore(s.db.Db)
 	userHandler := user.NewHandler(userStore)
 	userHandler.RegisterRoutes(subRouter)
+
+	homeStore := home.NewStore(s.db.Db)
+	homeHandler := home.NewHandler(homeStore)
+	homeHandler.RegisterRoutes(subRouter)
 
 	log.Println("Bloobin server running on port:", s.listenAddr)
 
