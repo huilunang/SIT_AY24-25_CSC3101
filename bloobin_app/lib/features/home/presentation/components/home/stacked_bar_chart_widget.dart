@@ -5,31 +5,35 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 class StackedBarChartWidget extends StatelessWidget {
   final String frequency;
+  final List<String> types;
   final List<dynamic> chartData;
 
-  const StackedBarChartWidget({
+  late final TooltipBehavior _tooltipBehavior;
+
+  StackedBarChartWidget({
     super.key,
     required this.frequency,
+    required this.types,
     required this.chartData,
-  });
+  }) {
+    _tooltipBehavior = TooltipBehavior(enable: true);
+  }
 
   List<ChartData> _processData() {
     final Map<String, Map<String, int>> groupedData = {};
 
     for (var entry in chartData) {
       // Parse the date and format based on frequency
-      final dateKey = frequency == 'Daily'
+      final dateKey = frequency.toLowerCase() == 'daily'
           ? DateFormat('dd/MM').format(DateTime.parse(entry.date))
           : DateFormat('MM/yy').format(DateTime.parse(entry.date));
 
       // Initialize entry for dateKey if not already present
       if (!groupedData.containsKey(dateKey)) {
-        groupedData[dateKey] = {'Plastic': 0, 'Cardboard': 0, 'Metal': 0};
+        groupedData[dateKey] = {for (var type in types) type: 0};
       }
 
-      // Increment the count for the material type
-      groupedData[dateKey]![entry.type] =
-          ((groupedData[dateKey]![entry.type] ?? 0) + entry.count) as int;
+      groupedData[dateKey]![entry.type] = entry.count;
     }
 
     // Flatten the grouped data into a list of ChartData
@@ -46,10 +50,18 @@ class StackedBarChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (chartData.isEmpty) {
+      return const Center(
+        child: Text(
+          'No data available for the selected period.',
+          style: TextStyle(fontSize: 18, color: Colors.grey),
+        ),
+      );
+    }
+
     final parsedData = _processData();
 
     // Define types and corresponding colors for the chart series
-    final types = ['Plastic', 'Cardboard', 'Metal'];
     // final colors = {
     //   'Plastic': Colors.blue[200],
     //   'Cardboard': Colors.green[600],
@@ -57,6 +69,7 @@ class StackedBarChartWidget extends StatelessWidget {
     // };
 
     return SfCartesianChart(
+      tooltipBehavior: _tooltipBehavior,
       legend: const Legend(isVisible: true),
       primaryXAxis: const CategoryAxis(),
       primaryYAxis: const NumericAxis(),

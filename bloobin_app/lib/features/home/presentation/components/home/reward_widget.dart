@@ -40,12 +40,12 @@ class RewardsWidget extends StatelessWidget {
                     children: [
                       _buildRewardTile(
                         colorScheme: colorScheme,
-                        value: state.home.point,
+                        value: state.home.points,
                         label: 'Points',
                         onTap: () {
                           Navigator.of(context).pushNamed(
                             '/points',
-                            arguments: state.home.point,
+                            arguments: state.home.points,
                           );
 
                           context.pointsBloc.add(PointsLoaded());
@@ -58,7 +58,7 @@ class RewardsWidget extends StatelessWidget {
                       ),
                       _buildRewardTile(
                         colorScheme: colorScheme,
-                        value: state.home.reward,
+                        value: state.home.rewards,
                         label: 'Rewards',
                         onTap: () {
                           Navigator.of(context).pushNamed('/reward');

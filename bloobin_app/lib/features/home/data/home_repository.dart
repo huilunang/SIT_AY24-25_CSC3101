@@ -1,89 +1,119 @@
 import 'dart:convert';
 
+import 'package:bloobin_app/config/config.dart';
 import 'package:bloobin_app/features/auth/helper/auth_helper.dart';
 import 'package:bloobin_app/features/home/domain/catalogue.dart';
 import 'package:bloobin_app/features/home/domain/chart_data.dart';
 import 'package:bloobin_app/features/home/domain/home.dart';
 import 'package:bloobin_app/features/home/domain/points.dart';
 import 'package:bloobin_app/features/home/domain/rewards.dart';
+import 'package:bloobin_app/utils/custom_exception.dart';
+import 'package:bloobin_app/utils/logger.dart';
+import 'package:dio/dio.dart';
 
 class HomeRepository {
-  late String _userId;
+  final Dio dio = Dio();
+  final logger = AppLogger();
+
+  late int _userId;
+  late String _token;
 
   HomeRepository() {
+    dio.options.baseUrl = Config.baseServerUrl;
     initialize();
   }
 
   Future<void> initialize() async {
-    _userId = await AuthHelper.getUserIdFromLocalStorage() ?? '';
+    final userAuth = await AuthHelper.getUserAuthFromLocalStorage();
+
+    _userId = int.tryParse(userAuth['userId'] ?? '') ?? 0;
+    _token = userAuth['token'] ?? '';
   }
 
   Future<Home> fetchHomeDetails({String frequency = 'Daily'}) async {
     try {
-      const mockResponse = '''
-      {
-        "point": "105",
-        "reward": "20",
-        "chartData": [
-          { "date": "2024-11-11T00:00:00Z", "type": "Plastic", "count": 12 },
-          { "date": "2024-12-11T00:00:00Z", "type": "Cardboard", "count": 8 },
-          { "date": "2024-12-31T00:00:00Z", "type": "Metal", "count": 5 },
-          { "date": "2025-01-02T00:00:00Z", "type": "Plastic", "count": 10 },
-          { "date": "2025-01-02T00:00:00Z", "type": "Cardboard", "count": 6 },
-          { "date": "2025-01-02T00:00:00Z", "type": "Metal", "count": 3 },
-          { "date": "2025-01-03T00:00:00Z", "type": "Plastic", "count": 6 }
-        ]
-      }
-      ''';
+      final res =
+          await dio.post('/home', data: {'user_id': _userId, 'interval': frequency});
 
-      final Map<String, dynamic> jsonData = jsonDecode(mockResponse);
+      final Map<String, dynamic> jsonData = res.data['data'];
 
-      final List<ChartData> chartData = (jsonData['chartData'] as List<dynamic>)
-          .map((item) => ChartData(
-                item['date'],
-                item['type'],
-                item['count'],
-              ))
-          .toList();
+      final List<ChartData> chartData =
+          (jsonData['chart_data'] as List<dynamic>?)
+                  ?.map((item) => ChartData(
+                        item['date'],
+                        item['type'],
+                        item['count'],
+                      ))
+                  .toList() ??
+              [];
+
+      final List<String> types = (jsonData['types'] as List<dynamic>?)
+              ?.map((item) => item as String)
+              .toList() ??
+          [];
 
       return Home(
-        jsonData['point'],
-        jsonData['reward'],
+        jsonData['points'].toString(),
+        jsonData['vouchers'].toString(),
+        types,
         chartData,
       );
+    } on DioException catch (e) {
+      if (e.response != null && e.response!.data is Map<String, dynamic>) {
+        final errorMessage =
+            e.response!.data["error"] ?? "Unknown error occurred";
+        throw CustomException(errorMessage);
+      } else {
+        logger.logError(e.toString());
+        throw CustomException("Network error. Please try again.");
+      }
     } catch (e) {
-      throw Exception("Error fetching home details: $e");
+      logger.logError("Unexpected error when accessing home details: $e");
+      throw CustomException("An unexpected error occurred. Please try again.");
     }
   }
 
   Future<Points> fetchPointDetails() async {
     try {
       const mockResponse = '''
-      {
-        "2024-11-11T00:00:00Z": [
-          "+ 3 pts from recycling",
-          "- 100 pts to redeem voucher",
-          "+ 3 pts from recycling"
-        ],
-        "2024-12-11T00:00:00Z": [
-          "+ 2 pts from recycling",
-          "- 50 pts to redeem voucher",
-          "- 100 pts to redeem voucher",
-          "+ 3 pts from recycling"
-        ],
-        "2024-01-11T00:00:00Z": [
-          "+ 2 pts from recycling",
-          "- 50 pts to redeem voucher",
-          "- 100 pts to redeem voucher",
-          "+ 3 pts from recycling"
-        ]
-      }
+      [
+        {
+          "date": "2024-11-11T00:00:00Z",
+          "descriptions": [
+            "+ 3 pts from recycling",
+            "- 100 pts to redeem voucher",
+            "+ 3 pts from recycling"
+          ]
+        },
+        {
+          "date": "2024-12-11T00:00:00Z",
+          "descriptions": [
+            "+ 2 pts from recycling",
+            "- 50 pts to redeem voucher",
+            "- 100 pts to redeem voucher",
+            "+ 3 pts from recycling"
+          ]
+        },
+        {
+          "date": "2024-01-11T00:00:00Z",
+          "descriptions": [
+            "+ 2 pts from recycling",
+            "- 50 pts to redeem voucher",
+            "- 100 pts to redeem voucher",
+            "+ 3 pts from recycling"
+          ]
+        }
+      ]
       ''';
 
-      final Map<String, dynamic> jsonData = jsonDecode(mockResponse);
-      final transactionData = jsonData.map(
-        (key, value) => MapEntry(key, List<String>.from(value)),
-      );
+      final List<dynamic> jsonData = jsonDecode(mockResponse);
+
+      final Map<String, List<String>> transactionData = {};
+      for (var transaction in jsonData) {
+        final date = transaction['date'] as String;
+        final descriptions = List<String>.from(transaction['descriptions']);
+        transactionData[date] = descriptions;
+      }
 
       return Points(transactionData: transactionData);
     } catch (e) {

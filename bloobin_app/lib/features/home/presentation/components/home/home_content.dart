@@ -16,7 +16,7 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
   void _handleSignOut() async {
-    await AuthHelper.removeUserIdFromLocalStorage();
+    await AuthHelper.removeUserAuthFromLocalStorage();
 
     if (mounted) {
       context.navigationBloc.add(Navigated(0));

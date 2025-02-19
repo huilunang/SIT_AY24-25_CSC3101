@@ -31,6 +31,7 @@ class AnalyticsWidget extends StatelessWidget {
             if (state is HomeLoadSuccess) {
               return StackedBarChartWidget(
                 frequency: state.frequency,
+                types: state.home.types,
                 chartData: state.home.chartData,
               );
             } else if (state is HomeError) {

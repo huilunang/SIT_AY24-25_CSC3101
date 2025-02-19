@@ -10,7 +10,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeLoaded>((event, emit) async {
       try {
         emit(HomeLoadInProgress());
-        final home = await _homeRepository.fetchHomeDetails();
+        final home = await _homeRepository.fetchHomeDetails(
+            frequency: event.newFrequency);
         emit(HomeLoadSuccess(event.newFrequency, home));
       } catch (e) {
         emit(HomeError('Failed to retrieve home details: $e'));
