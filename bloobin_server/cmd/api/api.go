@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/db"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/home"
+	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/reward_transaction"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/transaction"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/user"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/voucher_catalogue"
@@ -40,6 +41,10 @@ func (s *APIServer) Run() error {
 	voucherCatalogueStore := vouchercatalogue.NewStore(s.db.Db)
 	voucherCatalogueHandler := vouchercatalogue.NewHandler(voucherCatalogueStore)
 	voucherCatalogueHandler.RegisterRoutes(subRouter)
+
+	rewardTransactionStore := rewardtransaction.NewStore(s.db.Db)
+	rewardTransactionHandler := rewardtransaction.NewHandler(rewardTransactionStore)
+	rewardTransactionHandler.RegisterRoutes(subRouter)
 
 	log.Println("Bloobin server running on port:", s.listenAddr)
 

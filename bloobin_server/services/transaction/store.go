@@ -24,10 +24,10 @@ func (s *Store) GetTransactionHistories(userId int) ([]types.Transaction, error)
 		WHERE USER_ID = $1
 		AND DATE >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
 		UNION ALL
-		SELECT VALID_DATE AS DATE, DESCRIPTION
-		FROM T_REWARD_TRANSACTION
-		WHERE USER_ID = $1
-		AND VALID_DATE >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
+		SELECT VALID_DATE - INTERVAL '3 months' AS DATE, DESCRIPTION
+    	FROM T_REWARD_TRANSACTION
+    	WHERE USER_ID = $1
+    	AND VALID_DATE - INTERVAL '3 months' >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '3 months'
 	) AS combined_transactions
 	GROUP BY DATE
 	ORDER BY DATE DESC;

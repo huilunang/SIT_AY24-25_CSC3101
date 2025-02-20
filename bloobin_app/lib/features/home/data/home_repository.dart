@@ -136,12 +136,8 @@ class HomeRepository {
       final List<dynamic> jsonData = res.data['data'];
 
       return jsonData
-          .map((item) => Catalogue(
-                item['id'],
-                item['voucher_name'],
-                item['cost'],
-                item["immediate_claim"]
-              ))
+          .map((item) => Catalogue(item['id'], item['voucher_name'],
+              item['cost'], item["immediate_claim"]))
           .toList();
     } on DioException catch (e) {
       if (e.response != null && e.response!.data is Map<String, dynamic>) {
@@ -155,6 +151,43 @@ class HomeRepository {
     } catch (e) {
       logger.logError("Unexpected error when accessing reward catalogue: $e");
       throw CustomException("An unexpected error occurred. Please try again.");
+    }
+  }
+
+  Future<int> redeemCatalogueVoucher(String points, Catalogue catalogue) async {
+    try {
+      int difference = int.parse(points) - catalogue.cost;
+      if (difference < 0) {
+        throw CustomException(
+            "You are short of ${difference.abs()} pts to claim ${catalogue.name}");
+      }
+
+      await dio.post('/reward_transaction', data: {
+        'voucher_name': catalogue.name,
+        'points': catalogue.cost,
+        'immediate_claim': catalogue.immediateClaim,
+        'user_id': _userId
+      });
+
+      return difference;
+    } on DioException catch (e) {
+      if (e.response != null && e.response!.data is Map<String, dynamic>) {
+        final errorMessage =
+            e.response!.data["error"] ?? "Unknown error occurred";
+        throw CustomException(errorMessage);
+      } else {
+        logger.logError(e.toString());
+        throw CustomException("Network error. Please try again.");
+      }
+    } catch (e) {
+      logger.logError(
+          "Unexpected error when redeeming catalogue voucher using pts: $e");
+      if (e is CustomException) {
+        rethrow;
+      } else {
+        throw CustomException(
+            "An unexpected error occurred. Please try again.");
+      }
     }
   }
 }

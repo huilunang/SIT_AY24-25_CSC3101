@@ -1,5 +1,6 @@
 import 'package:bloobin_app/features/auth/presentation/blocs/auth_bloc.dart';
 import 'package:bloobin_app/features/home/presentation/blocs/catalogue/catalogue_bloc.dart';
+import 'package:bloobin_app/features/home/presentation/blocs/catalogue/catalogue_redeem_bloc.dart';
 import 'package:bloobin_app/features/home/presentation/blocs/home/home_bloc.dart';
 import 'package:bloobin_app/features/home/presentation/blocs/points/points_bloc.dart';
 import 'package:bloobin_app/features/home/presentation/blocs/rewards/rewards_bloc.dart';
@@ -19,4 +20,6 @@ extension BlocAcess on BuildContext {
   RewardsBloc get rewardsBloc => read<RewardsBloc>();
 
   CatalogueBloc get catalogueBloc => read<CatalogueBloc>();
+
+  CatalogueRedeemBloc get catalogueRedeemBloc => read<CatalogueRedeemBloc>();
 }

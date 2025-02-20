@@ -48,7 +48,8 @@ class PointsWidget extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const CataloguePage()),
+                            builder: (context) =>
+                                CataloguePage(points: points)),
                       );
                     },
                     child: const Text('Redeem Points'),
