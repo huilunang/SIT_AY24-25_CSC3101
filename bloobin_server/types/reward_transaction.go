@@ -7,6 +7,7 @@ import (
 type RewardTransactionStore interface {
 	CreateRewardTransaction(RewardTransaction RewardTransaction, immediateClaim bool, points int) error
 	ClaimRewardVoucher(claimedDate time.Time, voucherSerial string, userId int) error
+	GetRewardTransactions(userId int) ([]RewardTransaction, error)
 }
 
 type RewardTransaction struct {
@@ -31,4 +32,8 @@ type CreateRewardTransactionPayload struct {
 type ClaimRewardVoucherPayload struct {
 	VoucherSerial string `json:"voucher_serial" validate:"required"`
 	UserId        int    `json:"user_id" validate:"required"`
+}
+
+type GetRewardTransactionsPayload struct {
+	UserId int `json:"user_id" validate:"required"`
 }

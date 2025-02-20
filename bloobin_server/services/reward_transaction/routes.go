@@ -22,6 +22,7 @@ func NewHandler(store types.RewardTransactionStore) *Handler {
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/reward_transaction", h.handleCreateRewardTransaction).Methods("POST")
+	router.HandleFunc("/reward_transaction/retrieve", h.handleGetRewardTransactionsPayload).Methods("POST")
 	router.HandleFunc("/reward_transaction/claim", h.handleClaimRewardVoucher).Methods("POST")
 }
 
@@ -55,6 +56,32 @@ func (h *Handler) handleCreateRewardTransaction(w http.ResponseWriter, r *http.R
 	}
 
 	utils.WriteAPIJSON(w, http.StatusOK, nil)
+}
+
+func (h *Handler) handleGetRewardTransactionsPayload(w http.ResponseWriter, r *http.Request) {
+	getRewardTransactionsPayload := new(types.GetRewardTransactionsPayload)
+	if err := utils.DecodeAPIJSON(r, &getRewardTransactionsPayload); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+	}
+
+	if err := utils.Validate.Struct(getRewardTransactionsPayload); err != nil {
+		log.Printf("invalid payload: %s", utils.ExtractValidationErrors(err))
+		utils.WriteError(
+			w,
+			http.StatusBadRequest,
+			fmt.Errorf("%s", utils.ExtractValidationErrors(err)),
+		)
+		return
+	}
+
+	rt, err := h.store.GetRewardTransactions(getRewardTransactionsPayload.UserId)
+	if err != nil {
+		log.Printf("error retrieving claimable vouchers for user_id %d: %v",
+			getRewardTransactionsPayload.UserId, err)
+		utils.WriteError(w, http.StatusInternalServerError, err)
+	}
+
+	utils.WriteAPIJSON(w, http.StatusOK, map[string]interface{}{"data": rt})
 }
 
 func (h *Handler) handleClaimRewardVoucher(w http.ResponseWriter, r *http.Request) {

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:bloobin_app/config/config.dart';
 import 'package:bloobin_app/features/auth/helper/auth_helper.dart';
 import 'package:bloobin_app/features/home/domain/catalogue.dart';
@@ -104,28 +102,36 @@ class HomeRepository {
 
   Future<List<Rewards>> fetchRewardDetails() async {
     try {
-      const mockResponse = '''
-      [
-        { "id": "1", "name": "\$5 HPB Voucher", "validDate": "2024-03-00T00:00:00Z" },
-        { "id": "2", "name": "\$10 Fairprice Voucher", "validDate": "2024-04-00T00:00:00Z" },
-        { "id": "3", "name": "\$10 HPB Voucher", "validDate": "2024-04-00T00:00:00Z" },
-        { "id": "2", "name": "\$10 Fairprice Voucher", "validDate": "2024-04-00T00:00:00Z" },
-        { "id": "3", "name": "\$10 HPB Voucher", "validDate": "2024-04-00T00:00:00Z" },
-        { "id": "2", "name": "\$10 Fairprice Voucher", "validDate": "2024-04-00T00:00:00Z" }
-      ]
-      ''';
+      final res = await dio
+          .post('/reward_transaction/retrieve', data: {'user_id': _userId});
 
-      final List<dynamic> jsonData = jsonDecode(mockResponse);
+      final List<dynamic> jsonData = res.data['data'];
 
       return jsonData
           .map((item) => Rewards(
                 item['id'],
-                item['name'],
-                item['validDate'],
+                item['voucher_name'],
+                item['voucher_serial'],
+                item['valid_date'],
               ))
           .toList();
+    } on DioException catch (e) {
+      if (e.response != null && e.response!.data is Map<String, dynamic>) {
+        final errorMessage =
+            e.response!.data["error"] ?? "Unknown error occurred";
+        throw CustomException(errorMessage);
+      } else {
+        logger.logError(e.toString());
+        throw CustomException("Network error. Please try again.");
+      }
     } catch (e) {
-      throw Exception("Error fetching rewards: $e");
+      logger.logError("Unexpected error when accessing claimable vouchers: $e");
+      if (e is CustomException) {
+        rethrow;
+      } else {
+        throw CustomException(
+            "An unexpected error occurred. Please try again.");
+      }
     }
   }
 

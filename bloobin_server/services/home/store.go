@@ -26,7 +26,7 @@ func (s *Store) GetHomeData(userId int, interval string) (*types.Home, error) {
 	query = `
 	SELECT COUNT(*)
 	FROM T_REWARD_TRANSACTION
-	WHERE CLAIMED = FALSE AND USER_ID = $1
+	WHERE CLAIMED = FALSE AND CURRENT_DATE <= VALID_DATE AND USER_ID = $1
 	`
 	err = s.Db.QueryRow(query, userId).Scan(&home.Vouchers)
 	if err != nil {

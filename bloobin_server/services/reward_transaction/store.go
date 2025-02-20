@@ -77,6 +77,45 @@ func (s *Store) ClaimRewardVoucher(claimedDate time.Time, voucherSerial string, 
 	return nil
 }
 
+func (s *Store) GetRewardTransactions(userId int) ([]types.RewardTransaction, error) {
+	query := `
+	SELECT ID, VOUCHER_NAME, VOUCHER_SERIAL, VALID_DATE, USER_ID
+	FROM T_REWARD_TRANSACTION
+	WHERE CLAIMED = FALSE AND CURRENT_DATE <= VALID_DATE AND USER_ID = $1
+	`
+	stmt, err := s.prepareStmt(query)
+
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	rewardtransactions := make([]types.RewardTransaction, 0)
+	for rows.Next() {
+		rewardtransaction := new(types.RewardTransaction)
+
+		err = rows.Scan(
+			&rewardtransaction.ID,
+			&rewardtransaction.VoucherName,
+			&rewardtransaction.VoucherSerial,
+			&rewardtransaction.ValidDate,
+			&rewardtransaction.UserId,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		rewardtransactions = append(rewardtransactions, *rewardtransaction)
+	}
+
+	return rewardtransactions, nil
+}
+
 func (s *Store) prepareStmt(q string) (*sql.Stmt, error) {
 	stmt, err := s.Db.Prepare(q)
 
