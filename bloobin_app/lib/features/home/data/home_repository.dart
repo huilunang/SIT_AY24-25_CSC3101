@@ -140,6 +140,7 @@ class HomeRepository {
                 item['id'],
                 item['voucher_name'],
                 item['cost'],
+                item["immediate_claim"]
               ))
           .toList();
     } on DioException catch (e) {

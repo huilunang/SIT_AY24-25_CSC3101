@@ -7,8 +7,9 @@ type VoucherCatalogueStore interface {
 }
 
 type VoucherCatalogue struct {
-	ID          int       `json:"id"`
-	VoucherName string    `json:"voucher_name"`
-	Cost        int       `json:"cost"`
-	CreatedAt   time.Time `json:"created_at"`
+	ID             int       `json:"id"`
+	VoucherName    string    `json:"voucher_name"`
+	Cost           int       `json:"cost"`
+	ImmediateClaim bool      `json:"immediate_claim"`
+	CreatedAt      time.Time `json:"created_at"`
 }

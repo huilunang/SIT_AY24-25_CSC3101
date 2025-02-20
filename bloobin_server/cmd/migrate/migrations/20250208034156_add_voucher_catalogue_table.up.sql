@@ -2,15 +2,16 @@ CREATE TABLE IF NOT EXISTS T_VOUCHER_CATALOGUE (
   ID SERIAL PRIMARY KEY,
   VOUCHER_NAME VARCHAR(255) NOT NULL UNIQUE,
   COST INT NOT NULL,
+  IMMEDIATE_CLAIM BOOLEAN NOT NULL DEFAULT FALSE,
   CREATED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO T_VOUCHER_CATALOGUE (VOUCHER_NAME, COST)
+INSERT INTO T_VOUCHER_CATALOGUE (VOUCHER_NAME, COST, IMMEDIATE_CLAIM)
 VALUES 
-    ('$1 Cat Donation Fund', 100),
-    ('$1 Cancer Donation Fund', 100),
-    ('$1 SimplyGo Credit', 100),
-    ('$5 HPB eVoucher', 500),
-    ('$10 HPB eVoucher', 1000),
-    ('$5 FairPrice eVoucher', 500),
-    ('$10 FairPrice eVoucher', 1000);
+    ('$1 Cat Donation Fund', 100, TRUE),
+    ('$1 Cancer Donation Fund', 100, TRUE),
+    ('$1 SimplyGo Credit', 100, TRUE),
+    ('$5 HPB eVoucher', 500, FALSE),
+    ('$10 HPB eVoucher', 1000, FALSE),
+    ('$5 FairPrice eVoucher', 500, FALSE),
+    ('$10 FairPrice eVoucher', 1000, FALSE);
