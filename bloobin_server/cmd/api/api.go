@@ -7,7 +7,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/db"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/home"
+	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/transaction"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/user"
+	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/voucher_catalogue"
 )
 
 type APIServer struct {
@@ -30,6 +32,14 @@ func (s *APIServer) Run() error {
 	homeStore := home.NewStore(s.db.Db)
 	homeHandler := home.NewHandler(homeStore)
 	homeHandler.RegisterRoutes(subRouter)
+
+	transactionStore := transaction.NewStore(s.db.Db)
+	transactionHandler := transaction.NewHandler(transactionStore)
+	transactionHandler.RegisterRoutes(subRouter)
+
+	voucherCatalogueStore := vouchercatalogue.NewStore(s.db.Db)
+	voucherCatalogueHandler := vouchercatalogue.NewHandler(voucherCatalogueStore)
+	voucherCatalogueHandler.RegisterRoutes(subRouter)
 
 	log.Println("Bloobin server running on port:", s.listenAddr)
 

@@ -131,28 +131,29 @@ class HomeRepository {
 
   Future<List<Catalogue>> fetchCatalogueDetails() async {
     try {
-      const mockResponse = '''
-      [
-        { "id": "1", "name": "\$5 HPB Voucher", "cost": 100 },
-        { "id": "2", "name": "\$10 Fairprice Voucher", "cost": 200 },
-        { "id": "3", "name": "\$10 HPB Voucher", "cost": 200 },
-        { "id": "2", "name": "\$10 Fairprice Voucher", "cost": 200 },
-        { "id": "3", "name": "\$10 HPB Voucher", "cost": 200 },
-        { "id": "2", "name": "\$10 Fairprice Voucher", "cost": 200 }
-      ]
-      ''';
+      final res = await dio.get('/voucher_catalogues');
 
-      final List<dynamic> jsonData = jsonDecode(mockResponse);
+      final List<dynamic> jsonData = res.data['data'];
 
       return jsonData
           .map((item) => Catalogue(
                 item['id'],
-                item['name'],
+                item['voucher_name'],
                 item['cost'],
               ))
           .toList();
+    } on DioException catch (e) {
+      if (e.response != null && e.response!.data is Map<String, dynamic>) {
+        final errorMessage =
+            e.response!.data["error"] ?? "Unknown error occurred";
+        throw CustomException(errorMessage);
+      } else {
+        logger.logError(e.toString());
+        throw CustomException("Network error. Please try again.");
+      }
     } catch (e) {
-      throw Exception("Error fetching rewards: $e");
+      logger.logError("Unexpected error when accessing reward catalogue: $e");
+      throw CustomException("An unexpected error occurred. Please try again.");
     }
   }
 }
