@@ -36,6 +36,7 @@ func (s *Store) GetVoucherCatalogues() ([]types.VoucherCatalogue, error) {
 			&voucherCatalogue.ID,
 			&voucherCatalogue.VoucherName,
 			&voucherCatalogue.Cost,
+			&voucherCatalogue.ImmediateClaim,
 			&voucherCatalogue.CreatedAt,
 		)
 		if err != nil {
