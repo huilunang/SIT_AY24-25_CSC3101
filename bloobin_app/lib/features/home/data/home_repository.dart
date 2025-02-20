@@ -32,8 +32,8 @@ class HomeRepository {
 
   Future<Home> fetchHomeDetails({String frequency = 'Daily'}) async {
     try {
-      final res =
-          await dio.post('/home', data: {'user_id': _userId, 'interval': frequency});
+      final res = await dio
+          .post('/home', data: {'user_id': _userId, 'interval': frequency});
 
       final Map<String, dynamic> jsonData = res.data['data'];
 
@@ -75,49 +75,30 @@ class HomeRepository {
 
   Future<Points> fetchPointDetails() async {
     try {
-      const mockResponse = '''
-      [
-        {
-          "date": "2024-11-11T00:00:00Z",
-          "descriptions": [
-            "+ 3 pts from recycling",
-            "- 100 pts to redeem voucher",
-            "+ 3 pts from recycling"
-          ]
-        },
-        {
-          "date": "2024-12-11T00:00:00Z",
-          "descriptions": [
-            "+ 2 pts from recycling",
-            "- 50 pts to redeem voucher",
-            "- 100 pts to redeem voucher",
-            "+ 3 pts from recycling"
-          ]
-        },
-        {
-          "date": "2024-01-11T00:00:00Z",
-          "descriptions": [
-            "+ 2 pts from recycling",
-            "- 50 pts to redeem voucher",
-            "- 100 pts to redeem voucher",
-            "+ 3 pts from recycling"
-          ]
-        }
-      ]
-      ''';
+      final res = await dio.post('/transaction', data: {'user_id': _userId});
 
-      final List<dynamic> jsonData = jsonDecode(mockResponse);
+      final List<dynamic> jsonData = res.data['data'];
 
       final Map<String, List<String>> transactionData = {};
       for (var transaction in jsonData) {
         final date = transaction['date'] as String;
-        final descriptions = List<String>.from(transaction['descriptions']);
-        transactionData[date] = descriptions;
+        transactionData[date] = List<String>.from(transaction['descriptions']);
       }
 
       return Points(transactionData: transactionData);
+    } on DioException catch (e) {
+      if (e.response != null && e.response!.data is Map<String, dynamic>) {
+        final errorMessage =
+            e.response!.data["error"] ?? "Unknown error occurred";
+        throw CustomException(errorMessage);
+      } else {
+        logger.logError(e.toString());
+        throw CustomException("Network error. Please try again.");
+      }
     } catch (e) {
-      throw Exception("Error fetching transactions: $e");
+      logger
+          .logError("Unexpected error when accessing transaction history: $e");
+      throw CustomException("An unexpected error occurred. Please try again.");
     }
   }
 
