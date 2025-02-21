@@ -1,7 +1,7 @@
 import 'package:bloobin_app/features/home/presentation/blocs/home/home_bloc.dart';
 import 'package:bloobin_app/features/home/presentation/blocs/home/home_state.dart';
 import 'package:bloobin_app/features/home/presentation/blocs/points/points_event.dart';
-import 'package:bloobin_app/features/home/presentation/blocs/rewards/rewards_event.dart';
+import 'package:bloobin_app/features/home/presentation/blocs/rewards/reward_event.dart';
 import 'package:bloobin_app/utils/bloc_access_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -63,7 +63,7 @@ class RewardsWidget extends StatelessWidget {
                         onTap: () {
                           Navigator.of(context).pushNamed('/reward');
 
-                          context.rewardsBloc.add(RewardsLoaded());
+                          context.rewardsBloc.add(RewardLoaded());
                         },
                       ),
                     ],

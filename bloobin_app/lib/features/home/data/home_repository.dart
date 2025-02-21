@@ -4,7 +4,7 @@ import 'package:bloobin_app/features/home/domain/catalogue.dart';
 import 'package:bloobin_app/features/home/domain/chart_data.dart';
 import 'package:bloobin_app/features/home/domain/home.dart';
 import 'package:bloobin_app/features/home/domain/points.dart';
-import 'package:bloobin_app/features/home/domain/rewards.dart';
+import 'package:bloobin_app/features/home/domain/reward.dart';
 import 'package:bloobin_app/utils/custom_exception.dart';
 import 'package:bloobin_app/utils/logger.dart';
 import 'package:dio/dio.dart';
@@ -100,7 +100,7 @@ class HomeRepository {
     }
   }
 
-  Future<List<Rewards>> fetchRewardDetails() async {
+  Future<List<Reward>> fetchRewardDetails() async {
     try {
       final res = await dio
           .post('/reward_transaction/retrieve', data: {'user_id': _userId});
@@ -108,7 +108,7 @@ class HomeRepository {
       final List<dynamic> jsonData = res.data['data'];
 
       return jsonData
-          .map((item) => Rewards(
+          .map((item) => Reward(
                 item['id'],
                 item['voucher_name'],
                 item['voucher_serial'],
@@ -188,6 +188,31 @@ class HomeRepository {
     } catch (e) {
       logger.logError(
           "Unexpected error when redeeming catalogue voucher using pts: $e");
+      if (e is CustomException) {
+        rethrow;
+      } else {
+        throw CustomException(
+            "An unexpected error occurred. Please try again.");
+      }
+    }
+  }
+
+  Future<void> claimRewardVoucher(Reward reward) async {
+    try {
+      await dio.post('/reward_transaction/claim',
+          data: {'voucher_serial': reward.serialNo, 'user_id': _userId});
+    } on DioException catch (e) {
+      if (e.response != null && e.response!.data is Map<String, dynamic>) {
+        final errorMessage =
+            e.response!.data["error"] ?? "Unknown error occurred";
+        throw CustomException(errorMessage);
+      } else {
+        logger.logError(e.toString());
+        throw CustomException("Network error. Please try again.");
+      }
+    } catch (e) {
+      logger
+          .logError("Unexpected error when claiming to use reward voucher: $e");
       if (e is CustomException) {
         rethrow;
       } else {

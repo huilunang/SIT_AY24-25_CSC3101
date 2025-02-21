@@ -1,7 +1,7 @@
 import 'package:bloobin_app/features/home/presentation/blocs/home/home_event.dart';
 import 'package:bloobin_app/features/home/presentation/components/home/home_content.dart';
 import 'package:bloobin_app/features/home/presentation/pages/points_page.dart';
-import 'package:bloobin_app/features/home/presentation/pages/rewards_page.dart';
+import 'package:bloobin_app/features/home/presentation/pages/reward_page.dart';
 import 'package:bloobin_app/utils/bloc_access_extension.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/reward':
-            return MaterialPageRoute(builder: (_) => const RewardsPage());
+            return MaterialPageRoute(builder: (_) => const RewardPage());
           case '/points':
             final points = settings.arguments as String? ?? '0';
 

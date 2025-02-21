@@ -60,7 +60,7 @@ func (s *Store) ClaimRewardVoucher(claimedDate time.Time, voucherSerial string, 
 	query := `
 	UPDATE T_REWARD_TRANSACTION
 	SET CLAIMED = TRUE, CLAIMED_DATE = $1
-	WHERE VOUCHER_SERIAL = $2, USER_ID = $3
+	WHERE VOUCHER_SERIAL = $2 AND USER_ID = $3
 	`
 	stmt, err := s.prepareStmt(query)
 

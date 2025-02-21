@@ -6,7 +6,7 @@ import 'package:bloobin_app/features/home/presentation/blocs/catalogue/catalogue
 import 'package:bloobin_app/features/home/presentation/blocs/catalogue/catalogue_redeem_bloc.dart';
 import 'package:bloobin_app/features/home/presentation/blocs/home/home_bloc.dart';
 import 'package:bloobin_app/features/home/presentation/blocs/points/points_bloc.dart';
-import 'package:bloobin_app/features/home/presentation/blocs/rewards/rewards_bloc.dart';
+import 'package:bloobin_app/features/home/presentation/blocs/rewards/reward_bloc.dart';
 import 'package:bloobin_app/navigation/blocs/navigation_bloc.dart';
 import 'package:bloobin_app/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
                     RepositoryProvider.of<HomeRepository>(context),
                   )),
           BlocProvider(
-              create: (context) => RewardsBloc(
+              create: (context) => RewardBloc(
                     RepositoryProvider.of<HomeRepository>(context),
                   )),
           BlocProvider(
