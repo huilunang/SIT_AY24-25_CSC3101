@@ -9,9 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 class PointsWidget extends StatelessWidget {
-  final String points;
-
-  const PointsWidget({super.key, required this.points});
+  const PointsWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,31 +28,47 @@ class PointsWidget extends StatelessWidget {
                 color: colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(16.0),
               ),
-              child: Column(
-                children: [
-                  Text(
-                    "$points pts",
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.catalogueBloc.add(CatalogueLoaded());
+              child: BlocBuilder<PointsBloc, PointsState>(
+                builder: (context, state) {
+                  if (state is PointsLoadSuccess) {
+                    final points = state.points.points;
 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                CataloguePage(points: points)),
-                      );
-                    },
-                    child: const Text('Redeem Points'),
-                  ),
-                ],
+                    return Column(
+                      children: [
+                        Text(
+                          "$points pts",
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            context.catalogueBloc.add(CatalogueLoaded());
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CataloguePage(
+                                  points: points.toString(),
+                                ),
+                              ),
+                            );
+                          },
+                          child: const Text('Redeem Points'),
+                        ),
+                      ],
+                    );
+                  } else if (state is PointsLoadInProgress) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is PointsError) {
+                    return Center(child: Text(state.errorMessage));
+                  } else {
+                    return const Center(child: Text('No points available.'));
+                  }
+                },
               ),
             ),
           ),
@@ -74,17 +88,17 @@ class PointsWidget extends StatelessWidget {
               sectionChild: BlocBuilder<PointsBloc, PointsState>(
                 builder: (context, state) {
                   if (state is PointsLoadSuccess) {
-                    final transactionData = state.points.transactionData;
+                    final recordData = state.points.recordData;
                     final dateFormatter = DateFormat('yyyy-MM-dd');
 
                     return ListView.separated(
-                      itemCount: transactionData.keys.length,
+                      itemCount: recordData.keys.length,
                       separatorBuilder: (context, index) => const Divider(),
                       itemBuilder: (context, index) {
-                        final rawDate = transactionData.keys.elementAt(index);
+                        final rawDate = recordData.keys.elementAt(index);
                         final formattedDate =
                             dateFormatter.format(DateTime.parse(rawDate));
-                        final transactions = transactionData[rawDate]!;
+                        final transactions = recordData[rawDate]!;
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

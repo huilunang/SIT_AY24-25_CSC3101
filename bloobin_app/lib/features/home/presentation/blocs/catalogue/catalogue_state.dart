@@ -12,8 +12,22 @@ final class CatalogueLoadSuccess extends CatalogueState {
   CatalogueLoadSuccess(this.catalogueList);
 }
 
+final class CatalogueRedeemSuccess extends CatalogueState {
+  final String message;
+
+  CatalogueRedeemSuccess(this.message);
+}
+
+final class CatalogueEmpty extends CatalogueState {}
+
 final class CatalogueError extends CatalogueState {
   final String errorMessage;
 
   CatalogueError(this.errorMessage);
+}
+
+final class CatalogueRedeemError extends CatalogueState {
+  final String errorMessage;
+
+  CatalogueRedeemError(this.errorMessage);
 }

@@ -35,10 +35,7 @@ class _HomePageState extends State<HomePage> {
           case '/reward':
             return MaterialPageRoute(builder: (_) => const RewardPage());
           case '/points':
-            final points = settings.arguments as String? ?? '0';
-
-            return MaterialPageRoute(
-                builder: (_) => PointsPage(points: points));
+            return MaterialPageRoute(builder: (_) => const PointsPage());
           default:
             return MaterialPageRoute(builder: (_) => const HomeContent());
         }

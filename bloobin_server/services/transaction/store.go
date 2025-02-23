@@ -15,8 +15,16 @@ func NewStore(db *sql.DB) *Store {
 	return &Store{Db: db}
 }
 
-func (s *Store) GetTransactionHistories(userId int) ([]types.Transaction, error) {
-	query := `
+func (s *Store) GetTransactionHistories(userId int) (*types.Transaction, error) {
+	transaction := new(types.Transaction)
+
+	query := `SELECT POINTS FROM T_USER WHERE ID = $1`
+	err := s.Db.QueryRow(query, userId).Scan(&transaction.Points)
+	if err != nil {
+		return nil, err
+	}
+
+	query = `
 	SELECT DATE, ARRAY_AGG(DESCRIPTION) AS DESCRIPTIONS
 	FROM (
 		SELECT DATE, DESCRIPTION
@@ -39,20 +47,22 @@ func (s *Store) GetTransactionHistories(userId int) ([]types.Transaction, error)
 	}
 	defer rows.Close()
 
-	transactions := make([]types.Transaction, 0)
+	records := make([]types.Record, 0)
 	for rows.Next() {
-		transaction := new(types.Transaction)
+		record := new(types.Record)
 
 		err := rows.Scan(
-			&transaction.Date,
-			pq.Array(&transaction.Description),
+			&record.Date,
+			pq.Array(&record.Description),
 		)
 		if err != nil {
 			return nil, err
 		}
 
-		transactions = append(transactions, *transaction)
+		records = append(records, *record)
 	}
 
-	return transactions, nil
+	transaction.Records = records
+
+	return transaction, nil
 }

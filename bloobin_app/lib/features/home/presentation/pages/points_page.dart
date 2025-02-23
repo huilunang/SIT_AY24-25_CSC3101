@@ -2,20 +2,18 @@ import 'package:bloobin_app/features/home/presentation/components/points/points_
 import 'package:flutter/material.dart';
 
 class PointsPage extends StatelessWidget {
-  final String points;
-
-  const PointsPage({super.key, required this.points});
+  const PointsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+      body: const Padding(
+          padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              PointsWidget(points: points),
+              PointsWidget(),
             ],
           )),
     );

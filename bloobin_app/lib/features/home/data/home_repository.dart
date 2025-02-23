@@ -75,15 +75,16 @@ class HomeRepository {
     try {
       final res = await dio.post('/transaction', data: {'user_id': _userId});
 
-      final List<dynamic> jsonData = res.data['data'];
+      final Map<String, dynamic> jsonData = res.data['data'];
 
       final Map<String, List<String>> transactionData = {};
-      for (var transaction in jsonData) {
+      for (var transaction in jsonData['records']) {
         final date = transaction['date'] as String;
         transactionData[date] = List<String>.from(transaction['descriptions']);
       }
 
-      return Points(transactionData: transactionData);
+      return Points(
+          points: jsonData['points'].toString(), recordData: transactionData);
     } on DioException catch (e) {
       if (e.response != null && e.response!.data is Map<String, dynamic>) {
         final errorMessage =

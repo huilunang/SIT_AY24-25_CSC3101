@@ -43,10 +43,7 @@ class RewardsWidget extends StatelessWidget {
                         value: state.home.points,
                         label: 'Points',
                         onTap: () {
-                          Navigator.of(context).pushNamed(
-                            '/points',
-                            arguments: state.home.points,
-                          );
+                          Navigator.of(context).pushNamed('/points');
 
                           context.pointsBloc.add(PointsLoaded());
                         },
