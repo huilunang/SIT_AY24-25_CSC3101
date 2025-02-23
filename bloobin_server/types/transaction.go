@@ -15,7 +15,3 @@ type Record struct {
 	Date        time.Time `json:"date"`
 	Description []string  `json:"descriptions"`
 }
-
-type GetTransactionHistoriesPayload struct {
-	UserId int `json:"user_id" validate:"required"`
-}

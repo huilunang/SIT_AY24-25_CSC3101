@@ -13,7 +13,6 @@ class HomeRepository {
   final Dio dio = Dio();
   final logger = AppLogger();
 
-  late int _userId;
   late String _token;
 
   HomeRepository() {
@@ -23,15 +22,13 @@ class HomeRepository {
 
   Future<void> initialize() async {
     final userAuth = await AuthHelper.getUserAuthFromLocalStorage();
-
-    _userId = int.tryParse(userAuth['userId'] ?? '') ?? 0;
     _token = userAuth['token'] ?? '';
+    dio.options.headers['authorization'] = _token;
   }
 
   Future<Home> fetchHomeDetails({String frequency = 'Daily'}) async {
     try {
-      final res = await dio
-          .post('/home', data: {'user_id': _userId, 'interval': frequency});
+      final res = await dio.post('/home', data: {'interval': frequency});
 
       final Map<String, dynamic> jsonData = res.data['data'];
 
@@ -73,7 +70,7 @@ class HomeRepository {
 
   Future<Points> fetchPointDetails() async {
     try {
-      final res = await dio.post('/transaction', data: {'user_id': _userId});
+      final res = await dio.post('/transaction');
 
       final Map<String, dynamic> jsonData = res.data['data'];
 
@@ -103,8 +100,7 @@ class HomeRepository {
 
   Future<List<Reward>> fetchRewardDetails() async {
     try {
-      final res = await dio
-          .post('/reward_transaction/retrieve', data: {'user_id': _userId});
+      final res = await dio.post('/reward_transaction/retrieve');
 
       final List<dynamic> jsonData = res.data['data'];
 
@@ -173,7 +169,6 @@ class HomeRepository {
         'voucher_name': catalogue.name,
         'points': catalogue.cost,
         'immediate_claim': catalogue.immediateClaim,
-        'user_id': _userId
       });
 
       return difference;
@@ -201,7 +196,7 @@ class HomeRepository {
   Future<void> claimRewardVoucher(Reward reward) async {
     try {
       await dio.post('/reward_transaction/claim',
-          data: {'voucher_serial': reward.serialNo, 'user_id': _userId});
+          data: {'voucher_serial': reward.serialNo});
     } on DioException catch (e) {
       if (e.response != null && e.response!.data is Map<String, dynamic>) {
         final errorMessage =

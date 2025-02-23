@@ -61,8 +61,8 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteAPIJSON(w, http.StatusOK, map[string]interface{}{
-		"user":  u,
+	utils.WriteAPIJSON(w, http.StatusOK, map[string]any{
+		"points":  u.Points,
 		"token": token,
 	})
 }

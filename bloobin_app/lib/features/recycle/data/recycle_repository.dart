@@ -11,7 +11,6 @@ class RecycleRepository {
   final Dio dio = Dio();
   final logger = AppLogger();
 
-  late int _userId;
   late String _token;
 
   RecycleRepository() {
@@ -21,9 +20,8 @@ class RecycleRepository {
 
   Future<void> initialize() async {
     final userAuth = await AuthHelper.getUserAuthFromLocalStorage();
-
-    _userId = int.tryParse(userAuth['userId'] ?? '') ?? 0;
     _token = userAuth['token'] ?? '';
+    dio.options.headers['authorization'] = _token;
   }
 
   Future<RecycleResultModel> analyzeImage(File imageFile) async {
@@ -33,7 +31,6 @@ class RecycleRepository {
       FormData formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(imageFile.path,
             filename: imageFile.path.split('/').last),
-        'user_id': _userId
       });
 
       final res = await dio.post('/recycle_transactions', data: formData);

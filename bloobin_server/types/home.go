@@ -20,6 +20,5 @@ type Chart struct {
 }
 
 type GetHomePayload struct {
-	UserId   int    `json:"user_id" validate:"required"`
 	Interval string `json:"interval" validate:"required,interval"`
 }

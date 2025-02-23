@@ -22,8 +22,7 @@ class AuthRepository {
 
       if (res.statusCode == 200) {
         final data = UserSignInModel.fromJson(res.data);
-        await AuthHelper.saveUserAuthToLocalStorage(
-            data.userId.toString(), data.jwtToken);
+        await AuthHelper.saveUserAuthToLocalStorage(data.jwtToken);
 
         logger.logInfo("User '$email' login success");
       }

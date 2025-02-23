@@ -26,14 +26,8 @@ type CreateRewardTransactionPayload struct {
 	VoucherName    string `json:"voucher_name" validate:"required"`
 	Points         int    `json:"points" validate:"required"`
 	ImmediateClaim bool   `json:"immediate_claim"`
-	UserId         int    `json:"user_id" validate:"required"`
 }
 
 type ClaimRewardVoucherPayload struct {
 	VoucherSerial string `json:"voucher_serial" validate:"required"`
-	UserId        int    `json:"user_id" validate:"required"`
-}
-
-type GetRewardTransactionsPayload struct {
-	UserId int `json:"user_id" validate:"required"`
 }

@@ -32,23 +32,23 @@ func (s *APIServer) Run() error {
 	userHandler.RegisterRoutes(subRouter)
 
 	homeStore := home.NewStore(s.db.Db)
-	homeHandler := home.NewHandler(homeStore)
+	homeHandler := home.NewHandler(homeStore, userStore)
 	homeHandler.RegisterRoutes(subRouter)
 
 	transactionStore := transaction.NewStore(s.db.Db)
-	transactionHandler := transaction.NewHandler(transactionStore)
+	transactionHandler := transaction.NewHandler(transactionStore, userStore)
 	transactionHandler.RegisterRoutes(subRouter)
 
 	voucherCatalogueStore := vouchercatalogue.NewStore(s.db.Db)
-	voucherCatalogueHandler := vouchercatalogue.NewHandler(voucherCatalogueStore)
+	voucherCatalogueHandler := vouchercatalogue.NewHandler(voucherCatalogueStore, userStore)
 	voucherCatalogueHandler.RegisterRoutes(subRouter)
 
 	rewardTransactionStore := rewardtransaction.NewStore(s.db.Db)
-	rewardTransactionHandler := rewardtransaction.NewHandler(rewardTransactionStore)
+	rewardTransactionHandler := rewardtransaction.NewHandler(rewardTransactionStore, userStore)
 	rewardTransactionHandler.RegisterRoutes(subRouter)
 
 	recycleTransactionStore := recycletransaction.NewStore(s.db.Db)
-	recycleTransactionHandler := recycletransaction.NewHandler(recycleTransactionStore)
+	recycleTransactionHandler := recycletransaction.NewHandler(recycleTransactionStore, userStore)
 	recycleTransactionHandler.RegisterRoutes(subRouter)
 
 	log.Println("Bloobin server running on port:", s.listenAddr)

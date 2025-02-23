@@ -20,10 +20,8 @@ type RecycleTransaction struct {
 
 type GetRecycleTransactionsPayload struct {
 	ID string `json:"id" validate:"required"`
-	// JWTToken string `json:"jwt_token" validate:"required"`
 }
 
 type CreateRecycleTransactionPayload struct {
-	Image  []byte `json:"image" validate:"required"`
-	UserId int    `json:"user_id" validate:"required"`
+	Image []byte `json:"image" validate:"required"`
 }

@@ -9,22 +9,24 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/auth"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/classification"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/types"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/utils"
 )
 
 type Handler struct {
-	store types.RecycleTransactionStore
+	store     types.RecycleTransactionStore
+	userStore types.UserStore
 }
 
-func NewHandler(store types.RecycleTransactionStore) *Handler {
-	return &Handler{store: store}
+func NewHandler(store types.RecycleTransactionStore, userStore types.UserStore) *Handler {
+	return &Handler{store: store, userStore: userStore}
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	// router.HandleFunc("/recycle_transactions", h.handleGetRecycleTransactions).Methods("GET")
-	router.HandleFunc("/recycle_transactions", h.handleCreateRecycleTransaction).Methods("POST")
+	router.HandleFunc("/recycle_transactions", auth.WithJWTAuth(h.handleCreateRecycleTransaction, h.userStore)).Methods("POST")
 }
 
 // func (h *Handler) handleGetRecycleTransactions(w http.ResponseWriter, r *http.Request) {
@@ -61,17 +63,12 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 // }
 
 func (h *Handler) handleCreateRecycleTransaction(w http.ResponseWriter, r *http.Request) {
+	userId := auth.GetUserIdFromContext(r.Context())
+
 	err := r.ParseMultipartForm(10 << 20) // 10MB max file size
 	if err != nil {
 		log.Printf("error parsing form: %v", err)
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("%v", err))
-		return
-	}
-
-	userId, err := utils.ConvertStrToInt(r.FormValue("user_id"))
-	if err != nil {
-		log.Printf("invalid user_id format: %v", err)
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid user_id format"))
 		return
 	}
 
@@ -92,8 +89,7 @@ func (h *Handler) handleCreateRecycleTransaction(w http.ResponseWriter, r *http.
 	}
 
 	createRecycleTransactionPayload := types.CreateRecycleTransactionPayload{
-		Image:  imgBytes.Bytes(),
-		UserId: userId,
+		Image: imgBytes.Bytes(),
 	}
 
 	if err := utils.Validate.Struct(createRecycleTransactionPayload); err != nil {
@@ -119,14 +115,14 @@ func (h *Handler) handleCreateRecycleTransaction(w http.ResponseWriter, r *http.
 		Image:       createRecycleTransactionPayload.Image,
 		Description: fmt.Sprintf("+ %d pts from recycling", classificationResult.Points),
 		Date:        time.Now().Truncate(24 * time.Hour),
-		UserId:      createRecycleTransactionPayload.UserId,
+		UserId:      userId,
 	}, classificationResult.Points)
 	if err != nil {
 		log.Printf("error saving recycling data %v", err)
 		utils.WriteError(w, http.StatusInternalServerError, err)
 	}
 
-	utils.WriteAPIJSON(w, http.StatusCreated, map[string]interface{}{
+	utils.WriteAPIJSON(w, http.StatusCreated, map[string]any{
 		"material": classificationResult.Subtype,
 		"points":   classificationResult.Points,
 	})
