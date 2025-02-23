@@ -92,8 +92,8 @@ class RewardPage extends StatelessWidget {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      context.rewardsBloc
-                                          .add(RewardClaimed(voucher));
+                                      context.rewardsBloc.add(RewardClaimed(
+                                          context.homeBloc, voucher));
                                       Navigator.of(context).pop();
                                     },
                                     child: const Text('Claim'),

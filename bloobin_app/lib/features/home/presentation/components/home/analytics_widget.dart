@@ -13,19 +13,28 @@ class AnalyticsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: SectionWidget(
-        sectionHeader: const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Analytics',
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.w500,
+        sectionHeader:
+            BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
+          String currentFrequency = 'Daily';
+
+          if (state is HomeLoadSuccess) {
+            currentFrequency = state.frequency;
+          }
+
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Analytics',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            ChartDropdownWidget(),
-          ],
-        ),
+              ChartDropdownWidget(selectedFrequency: currentFrequency),
+            ],
+          );
+        }),
         sectionChild: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
             if (state is HomeLoadSuccess) {

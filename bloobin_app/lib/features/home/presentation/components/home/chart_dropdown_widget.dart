@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 typedef MenuEntry = DropdownMenuEntry<String>;
 
 class ChartDropdownWidget extends StatelessWidget {
-  const ChartDropdownWidget({super.key});
+  final String selectedFrequency;
+
+  const ChartDropdownWidget({super.key, required this.selectedFrequency});
 
   static const List<String> dropdownOptions = ['Daily', 'Monthly'];
   static final List<MenuEntry> menuEntries = UnmodifiableListView<MenuEntry>(
@@ -30,7 +32,7 @@ class ChartDropdownWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.0),
         ),
         child: DropdownMenu<String>(
-          initialSelection: dropdownOptions.first,
+          initialSelection: selectedFrequency,
           onSelected: (String? value) {
             if (value != null) {
               context.homeBloc.add(HomeLoaded(newFrequency: value));
