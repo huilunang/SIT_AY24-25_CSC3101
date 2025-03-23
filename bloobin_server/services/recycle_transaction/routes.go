@@ -6,8 +6,10 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/auth"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/classification"
@@ -109,21 +111,61 @@ func (h *Handler) handleCreateRecycleTransaction(w http.ResponseWriter, r *http.
 		return
 	}
 
-	err = h.store.CreateRecycleTransaction(types.RecycleTransaction{
-		Type:        classificationResult.Type,
-		Subtype:     classificationResult.Subtype,
-		Image:       createRecycleTransactionPayload.Image,
-		Description: fmt.Sprintf("+ %d pts from recycling", classificationResult.Points),
-		Date:        time.Now().Truncate(24 * time.Hour),
-		UserId:      userId,
-	}, classificationResult.Points)
+	availablePoints, pointsMessage, err := h.store.CheckAvailablePoints(userId, classificationResult.Points)
 	if err != nil {
-		log.Printf("error saving recycling data %v", err)
+		log.Printf("error checking available points: %v", err)
 		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
 	}
 
-	utils.WriteAPIJSON(w, http.StatusCreated, map[string]any{
-		"material": classificationResult.Subtype,
-		"points":   classificationResult.Points,
-	})
+	imageID, err := h.store.SaveImage(createRecycleTransactionPayload.Image)
+	if err != nil {
+		log.Printf("error saving image: %v", err)
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	predictionID, err := uuid.NewV7()
+	if err != nil {
+		log.Printf("error generating UUID: %v", err)
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	for i, cType := range classificationResult.Type {
+		pointsToAdd := 0
+		if availablePoints >= 1 && cType != "non-recyclable" {
+			pointsToAdd = 1
+			availablePoints--
+		}
+
+		err = h.store.CreateRecycleTransaction(types.RecycleTransaction{
+			Type:         cType,
+			Subtype:      classificationResult.Subtype[i],
+			Confidence:   classificationResult.Confidence[i],
+			ImageId:      imageID,
+			Description:  fmt.Sprintf("+ %d pts from recycling", pointsToAdd),
+			Date:         time.Now().Truncate(24 * time.Hour),
+			PredictionId: predictionID.String(),
+			UserId:       userId,
+		}, pointsToAdd)
+		if err != nil {
+			log.Printf("error saving recycling data: %v", err)
+			utils.WriteError(w, http.StatusInternalServerError, err)
+			return
+		}
+	}
+
+	responsePayload := map[string]any{
+		"material":       strings.Join(utils.RemoveDuplicateStr(classificationResult.Subtype), ", "),
+		"points_message": pointsMessage,
+	}
+	if len(classificationResult.NonRecyclable) > 0 {
+		responsePayload["remark"] = fmt.Sprintf(
+			"Ensure recyclables are clean. Detected non-recyclables or contaminants include: %v.",
+			strings.Join(classificationResult.NonRecyclable, ", "),
+		)
+	}
+
+	utils.WriteAPIJSON(w, http.StatusCreated, responsePayload)
 }

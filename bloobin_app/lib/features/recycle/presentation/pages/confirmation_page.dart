@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloobin_app/common_widgets/custom_snack_bar.dart';
 import 'package:bloobin_app/features/recycle/data/recycle_result_model.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,17 @@ class ConfirmationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    if (recycleResult.remark != null && recycleResult.remark!.isNotEmpty) {
+      // Show SnackBar on build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          CustomSnackBar.show(context, recycleResult.remark!, type: 'error')
+        );
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text("Details")),
       body: Padding(
@@ -36,7 +48,7 @@ class ConfirmationPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "Points Earned: ${recycleResult.pointsEarned}",
+              recycleResult.pointsMessage,
               style: const TextStyle(fontSize: 16, color: Colors.green),
             ),
             const SizedBox(height: 35),

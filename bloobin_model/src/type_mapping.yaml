@@ -1,0 +1,25 @@
+metal:
+  - metal-aluminium-foil
+  - metal-can
+  - metal-utensil
+
+plastic:
+  - plastic-bottle
+  - plastic-cap
+
+glass:
+  - glass-bottle
+
+paper:
+  - paper-package
+
+cardboard:
+  - cardboard-box
+
+non-recyclable:
+  - contaminant
+  - silicone-funnel
+  - styrofoam
+  - takeaway-plastic-container
+  - trash
+  - water

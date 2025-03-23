@@ -2,8 +2,10 @@ package recycletransaction
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/types"
+	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/utils"
 )
 
 type Store struct {
@@ -57,6 +59,54 @@ func NewStore(db *sql.DB) *Store {
 // 	return recycleTransactions, nil
 // }
 
+func (s *Store) CheckAvailablePoints(userId int, points int) (int, string, error) {
+	const maxPoints = 5
+
+	var totalRecyclablePoints int
+	query := `
+        SELECT COUNT(*)
+        FROM T_RECYCLE_TRANSACTION
+        WHERE USER_ID = $1 AND TYPE != 'non-recyclable' AND DATE = CURRENT_DATE
+    `
+	err := s.Db.QueryRow(query, userId).Scan(&totalRecyclablePoints)
+	if err != nil {
+		return 0, "", err
+	}
+
+	if totalRecyclablePoints >= maxPoints {
+		return 0, fmt.Sprintf("Daily point limit reached (%d/%d).", maxPoints, maxPoints), nil
+	}
+
+	availablePoints := maxPoints - totalRecyclablePoints
+	if points > availablePoints {
+		points = availablePoints
+	}
+
+	remainingPoints := maxPoints - totalRecyclablePoints - points
+	message := fmt.Sprintf(
+		"%d/%d points earned today. %d point%s left.",
+		totalRecyclablePoints+points, maxPoints, remainingPoints, utils.Pluralize(remainingPoints),
+	)
+
+	return availablePoints, message, nil
+}
+
+func (s *Store) SaveImage(image []byte) (int, error) {
+	query := `
+	INSERT INTO T_IMAGE (IMAGE)
+	VALUES ($1)
+	RETURNING ID
+	`
+	var imageId int
+
+	err := s.Db.QueryRow(query, image).Scan(&imageId)
+	if err != nil {
+		return 0, err
+	}
+
+	return imageId, nil
+}
+
 func (s *Store) CreateRecycleTransaction(recycleTransaction types.RecycleTransaction, points int) error {
 	tx, err := s.Db.Begin()
 	if err != nil {
@@ -64,15 +114,17 @@ func (s *Store) CreateRecycleTransaction(recycleTransaction types.RecycleTransac
 	}
 
 	query := `
-	INSERT INTO T_RECYCLE_TRANSACTION (TYPE, SUBTYPE, IMAGE, DESCRIPTION, DATE, USER_ID)
-	VALUES ($1, $2, $3, $4, $5, $6)
+	INSERT INTO T_RECYCLE_TRANSACTION (TYPE, SUBTYPE, CONFIDENCE, DESCRIPTION, DATE, PREDICTION_ID, IMAGE_ID, USER_ID)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 	`
 	_, err = tx.Exec(query,
 		recycleTransaction.Type,
 		recycleTransaction.Subtype,
-		recycleTransaction.Image,
+		recycleTransaction.Confidence,
 		recycleTransaction.Description,
 		recycleTransaction.Date,
+		recycleTransaction.PredictionId,
+		recycleTransaction.ImageId,
 		recycleTransaction.UserId,
 	)
 	if err != nil {

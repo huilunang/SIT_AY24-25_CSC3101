@@ -12,6 +12,7 @@ type Config struct {
 	DBConnStr           string
 	JWTExpiredInSeconds int64
 	JWTSecret           string
+	InferenceUrl        string
 }
 
 var Envs = initConfig()
@@ -25,6 +26,7 @@ func initConfig() *Config {
 		DBConnStr:           getEnv("DB_CONN_STR", "postgres://user:password@localhost:5432/dbname?sslmode=disable"),
 		JWTExpiredInSeconds: getEnvAsInt("JWTEXPSEC", 3600*24*7),
 		JWTSecret:           getEnv("JWT_SECRET", "jwt-shh-secret"),
+		InferenceUrl:        getEnv("INFERENCE_URL", "http://localhost:5000/inference"),
 	}
 }
 
