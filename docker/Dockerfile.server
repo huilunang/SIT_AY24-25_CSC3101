@@ -1,0 +1,20 @@
+FROM golang:alpine3.21 AS builder
+
+WORKDIR /usr/src/app
+
+COPY bloobin_server/go.mod bloobin_server/go.sum ./
+RUN go mod download
+
+COPY . .
+
+RUN cd bloobin_server && go build -o /usr/local/bin/bloobin_server cmd/main.go
+
+FROM alpine:3.21
+
+COPY --from=builder /usr/local/bin/bloobin_server /usr/local/bin/bloobin_server
+
+COPY .env .env
+
+EXPOSE 8080
+
+CMD ["/usr/local/bin/bloobin_server"]

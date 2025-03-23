@@ -13,8 +13,6 @@ class ConfirmationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     if (recycleResult.remark != null && recycleResult.remark!.isNotEmpty) {
       // Show SnackBar on build
       WidgetsBinding.instance.addPostFrameCallback((_) {
