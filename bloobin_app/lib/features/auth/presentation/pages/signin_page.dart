@@ -68,6 +68,7 @@ class SignInPage extends StatelessWidget {
                   CustomTextField(
                     controller: passwordController,
                     labelText: 'Password',
+                    obscureText: true,
                   ),
                   const SizedBox(height: 24),
                   SizedBox(
