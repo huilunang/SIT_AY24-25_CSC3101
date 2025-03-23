@@ -26,7 +26,9 @@ class SignUpPage extends StatelessWidget {
           if (state is AuthLoadSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
                 CustomSnackBar.show(context, "Signing up...", type: 'success'));
-            Navigator.pop(context);
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
           } else if (state is AuthSignUpError) {
             ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar.show(
                 context, state.errorMessage,
@@ -61,11 +63,13 @@ class SignUpPage extends StatelessWidget {
                   CustomTextField(
                     controller: passwordController,
                     labelText: 'Password',
+                    obscureText: true,
                   ),
                   const SizedBox(height: 14),
                   CustomTextField(
                     controller: confirmPasswordController,
                     labelText: 'Re-enter password',
+                    obscureText: true,
                   ),
                   const SizedBox(height: 24),
                   SizedBox(
