@@ -12,18 +12,18 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/auth"
-	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/classification"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/types"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/utils"
 )
 
 type Handler struct {
-	store     types.RecycleTransactionStore
-	userStore types.UserStore
+	store      types.RecycleTransactionStore
+	userStore  types.UserStore
+	classifier types.Classifier
 }
 
-func NewHandler(store types.RecycleTransactionStore, userStore types.UserStore) *Handler {
-	return &Handler{store: store, userStore: userStore}
+func NewHandler(store types.RecycleTransactionStore, userStore types.UserStore, classifier types.Classifier) *Handler {
+	return &Handler{store: store, userStore: userStore, classifier: classifier}
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
@@ -104,7 +104,7 @@ func (h *Handler) handleCreateRecycleTransaction(w http.ResponseWriter, r *http.
 		return
 	}
 
-	classificationResult, err := classification.ClassifyImage(createRecycleTransactionPayload.Image)
+	classificationResult, err := h.classifier.ClassifyImage(createRecycleTransactionPayload.Image)
 	if err != nil {
 		log.Printf("error classifying image: %v", err)
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("error classifying image"))

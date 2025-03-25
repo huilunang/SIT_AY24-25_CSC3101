@@ -54,7 +54,7 @@ func (h *Handler) handleCreateRewardTransaction(w http.ResponseWriter, r *http.R
 		UserId:        userId,
 	}, createRewardTransactionPayload.ImmediateClaim, createRewardTransactionPayload.Points)
 	if err != nil {
-		log.Printf("error redeeming points for user_id %d: %v", userId, err)
+		log.Printf("error creating reward transaction for user_id %d: %v", userId, err)
 		utils.WriteError(w, http.StatusInternalServerError, err)
 	}
 

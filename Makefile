@@ -29,13 +29,13 @@ run:
 	@docker compose ${COMPOSE_FILE_ARG} ${ENV_FILE_ARG} up --build
 
 clean:
-	@echo "Cleaning Bloobin Server..."
+	@echo "Cleaning Bloobin Application..."
 	@docker compose ${COMPOSE_FILE_ARG} ${ENV_FILE_ARG} down --remove-orphans
 	@rm -rf bin
 
 test:
-	@echo "Testing..."
-	@go test -v ./tests
+	@echo "Testing bloobin server..."
+	@cd bloobin_server && go test -v ./tests
 
 migration: wait-db
 	@echo "Creating migration file..."

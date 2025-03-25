@@ -56,27 +56,6 @@ func (s *Store) CreateRewardTransaction(rewardTransaction types.RewardTransactio
 	return nil
 }
 
-func (s *Store) ClaimRewardVoucher(claimedDate time.Time, voucherSerial string, userId int) error {
-	query := `
-	UPDATE T_REWARD_TRANSACTION
-	SET CLAIMED = TRUE, CLAIMED_DATE = $1
-	WHERE VOUCHER_SERIAL = $2 AND USER_ID = $3
-	`
-	stmt, err := s.prepareStmt(query)
-
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(claimedDate, voucherSerial, userId)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (s *Store) GetRewardTransactions(userId int) ([]types.RewardTransaction, error) {
 	query := `
 	SELECT ID, VOUCHER_NAME, VOUCHER_SERIAL, VALID_DATE, USER_ID
@@ -114,6 +93,27 @@ func (s *Store) GetRewardTransactions(userId int) ([]types.RewardTransaction, er
 	}
 
 	return rewardtransactions, nil
+}
+
+func (s *Store) ClaimRewardVoucher(claimedDate time.Time, voucherSerial string, userId int) error {
+	query := `
+	UPDATE T_REWARD_TRANSACTION
+	SET CLAIMED = TRUE, CLAIMED_DATE = $1
+	WHERE VOUCHER_SERIAL = $2 AND USER_ID = $3
+	`
+	stmt, err := s.prepareStmt(query)
+
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(claimedDate, voucherSerial, userId)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Store) prepareStmt(q string) (*sql.Stmt, error) {

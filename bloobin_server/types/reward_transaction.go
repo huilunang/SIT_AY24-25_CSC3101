@@ -5,9 +5,9 @@ import (
 )
 
 type RewardTransactionStore interface {
-	CreateRewardTransaction(RewardTransaction RewardTransaction, immediateClaim bool, points int) error
-	ClaimRewardVoucher(claimedDate time.Time, voucherSerial string, userId int) error
+	CreateRewardTransaction(rewardTransaction RewardTransaction, immediateClaim bool, points int) error
 	GetRewardTransactions(userId int) ([]RewardTransaction, error)
+	ClaimRewardVoucher(claimedDate time.Time, voucherSerial string, userId int) error
 }
 
 type RewardTransaction struct {

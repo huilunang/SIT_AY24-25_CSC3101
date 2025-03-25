@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/db"
+	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/classification"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/home"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/recycle_transaction"
 	"github.com/huilunang/SIT_AY24-25_CSC3101/bloobin_server/services/reward_transaction"
@@ -48,7 +49,8 @@ func (s *APIServer) Run() error {
 	rewardTransactionHandler.RegisterRoutes(subRouter)
 
 	recycleTransactionStore := recycletransaction.NewStore(s.db.Db)
-	recycleTransactionHandler := recycletransaction.NewHandler(recycleTransactionStore, userStore)
+	classifier := classification.NewClassifier()
+	recycleTransactionHandler := recycletransaction.NewHandler(recycleTransactionStore, userStore, classifier)
 	recycleTransactionHandler.RegisterRoutes(subRouter)
 
 	log.Println("Bloobin server running on port:", s.listenAddr)

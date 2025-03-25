@@ -56,5 +56,5 @@ func (h *Handler) handleGetHomeData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteAPIJSON(w, http.StatusOK, map[string]interface{}{"data": home})
+	utils.WriteAPIJSON(w, http.StatusOK, map[string]any{"data": home})
 }

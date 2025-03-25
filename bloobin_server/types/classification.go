@@ -1,5 +1,9 @@
 package types
 
+type Classifier interface {
+	ClassifyImage(image []byte) (*Classification, error)
+}
+
 type Classification struct {
 	Type          []string `json:"type"`
 	Subtype       []string `json:"subtype"`
