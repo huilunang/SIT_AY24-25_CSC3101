@@ -159,6 +159,7 @@ func (h *Handler) handleCreateRecycleTransaction(w http.ResponseWriter, r *http.
 	responsePayload := map[string]any{
 		"material":       strings.Join(utils.RemoveDuplicateStr(classificationResult.Subtype), ", "),
 		"points_message": pointsMessage,
+		"image_base64":   classificationResult.Image,
 	}
 	if len(classificationResult.NonRecyclable) > 0 {
 		responsePayload["remark"] = fmt.Sprintf(

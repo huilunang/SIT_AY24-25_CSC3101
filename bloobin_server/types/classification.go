@@ -10,4 +10,5 @@ type Classification struct {
 	Confidence    []string `json:"confidence"`
 	Points        int      `json:"points"`
 	NonRecyclable []string `json:"non_recyclable"`
+	Image         string   `json:"image"`
 }

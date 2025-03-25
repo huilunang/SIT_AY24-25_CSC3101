@@ -1,3 +1,4 @@
+import base64
 import os
 import yaml
 
@@ -49,6 +50,11 @@ def predict():
     results = model.predict(filepath, save=True)
     os.remove(filepath)
 
+    predict_image_path = "runs/segment/predict/uploaded_image.jpg"
+
+    with open(predict_image_path, "rb") as image_file:
+        encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
+
     types, subtypes, confidence = [], [], []
     non_recyclables = set()
 
@@ -71,7 +77,8 @@ def predict():
         "subtype": subtypes,
         "confidence": confidence,
         "points": recycable_len if recycable_len <= 3 else 3,
-        "non_recyclable": list(non_recyclables)
+        "non_recyclable": list(non_recyclables),
+        "image": encoded_image
     }
 
     print(f'response_data: {response_data}', flush=True)

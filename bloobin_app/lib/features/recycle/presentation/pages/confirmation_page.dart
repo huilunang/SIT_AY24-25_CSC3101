@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:bloobin_app/common_widgets/custom_snack_bar.dart';
 import 'package:bloobin_app/features/recycle/data/recycle_result_model.dart';
@@ -14,13 +16,13 @@ class ConfirmationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (recycleResult.remark != null && recycleResult.remark!.isNotEmpty) {
-      // Show SnackBar on build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
-          CustomSnackBar.show(context, recycleResult.remark!, type: 'error')
-        );
+            CustomSnackBar.show(context, recycleResult.remark!, type: 'error'));
       });
     }
+
+    Uint8List imageBytes = base64Decode(recycleResult.imageBase64);
 
     return Scaffold(
       appBar: AppBar(title: const Text("Details")),
@@ -34,7 +36,8 @@ class ConfirmationPage extends StatelessWidget {
               height: 380,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: FileImage(imageFile),
+                  // image: FileImage(imageFile),
+                  image: MemoryImage(imageBytes),
                   fit: BoxFit.cover,
                 ),
               ),
